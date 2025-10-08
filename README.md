@@ -208,13 +208,7 @@ You are free to use, modify, and distribute this software for both personal and 
 
 Muhammad Yousuf
 Full Stack Developer
-Email: [[your-email@example.com](mailto:your-email@example.com)]
-Portfolio: [your-portfolio-link.com]
+Email: [[fullstack.yousuf@gmail.com](mailto:fullstack.yousuf@gmail.com)]
+Portfolio: [github.com/fullstack-yousuf]
 
-```
 
----
-
-Just copy the above entire block and save as `README.md` — ready to go!  
-Let me know if you want me to add badges, screenshots, or anything else.
-```
