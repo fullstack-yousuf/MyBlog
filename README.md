@@ -209,6 +209,6 @@ You are free to use, modify, and distribute this software for both personal and 
 Muhammad Yousuf
 Full Stack Developer
 Email: [[fullstack.yousuf@gmail.com](mailto:fullstack.yousuf@gmail.com)]
-Portfolio: [github.com/fullstack-yousuf]
+Portfolio: [github.com/fullstack-yousuf](https://github.com/fullstack-yousuf)
 
 
