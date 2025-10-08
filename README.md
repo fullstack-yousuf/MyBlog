@@ -84,6 +84,18 @@ npm run dev
 Access the frontend at: `http://localhost:3000`
 
 ---
+##  Demo Accounts
+
+You can use the following dummy user credentials to log in and explore the app:
+
+| Name      | Email              | Password      |
+|-----------|--------------------|---------------|
+| Alice     | alice@example.com  | password123   |
+| Bob       | bob@example.com    | secret456     |
+| Charlie   | charlie@example.com| charlie789    |
+
+> These demo users account are provided for testing and development purposes only.
+
 
 ## API Overview
 
