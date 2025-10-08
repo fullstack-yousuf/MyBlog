@@ -34,8 +34,8 @@ Ensure the following are installed on your machine:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/<your-username>/myblog.git
-cd myblog
+git clone https://github.com/fullstack-yousuf/MyBlog.git
+cd MyBlog
 ````
 
 ### 2. Backend Setup
@@ -73,12 +73,6 @@ The backend API will be available at: `http://localhost:5000`
 ```bash
 cd ../frontend
 npm install
-```
-
-Create a `.env` file inside the `frontend/` directory:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
 Start the frontend development server:
@@ -123,7 +117,6 @@ Access the frontend at: `http://localhost:3000`
 | --------------- | ----------------------------------------- |
 | `npm run dev`   | Run backend in development mode (Nodemon) |
 | `npm run start` | Run backend in production mode            |
-| `npm run lint`  | Run ESLint for code quality checks        |
 
 ### Frontend
 
@@ -132,7 +125,6 @@ Access the frontend at: `http://localhost:3000`
 | `npm run dev`   | Start Next.js development server |
 | `npm run build` | Build frontend for production    |
 | `npm run start` | Start production build           |
-| `npm run lint`  | Run ESLint checks                |
 
 ---
 
@@ -163,26 +155,14 @@ Authorization: Bearer <token>
 ### Backend
 
 * Node.js + Express
-* SQLite (default, configurable to PostgreSQL/MySQL)
+* SQLite    
 * JWT Authentication
 * Socket.io (for real-time chat)
 * Bcrypt (password hashing)
 
 ---
 
-## Deployment
 
-Recommended platforms:
-
-* Frontend: [Vercel](https://vercel.com/) or [Netlify](https://netlify.com/)
-* Backend: [Render](https://render.com/), [Railway](https://railway.app/), or any Node.js hosting
-
-**Notes:**
-
-* Set environment variables appropriately in each environment.
-* Update `NEXT_PUBLIC_API_URL` in frontend `.env` to point to your deployed backend API.
-
----
 
 ## Example `.env.example`
 
@@ -190,9 +170,6 @@ Recommended platforms:
 # Backend
 PORT=5000
 JWT_SECRET=<your_generated_secret>
-
-# Frontend
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
 ---
