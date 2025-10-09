@@ -15,8 +15,6 @@ export default function ChatLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeChat, setActiveChat] = useState<string>(""); // ✅ store chat object
 
-  const { user } = useAuth(); // ✅ no axios call here
-  // console.log("use in layout",user);
 
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-4rem)] bg-gray-50 p-4">
@@ -29,17 +27,7 @@ export default function ChatLayout() {
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
         >
           {
-            /* <ChatSidebar
-            currentUser={currentUser}   // ✅ pass it here
-
-            onClose={() => setSidebarOpen(false)}
-            onSelectChat={(chat) => {
-              // ✅ pass full chat object
-              setActiveChat(chat);
-              setSidebarOpen(false);
-            }}
-            activeChat={activeChat?._id || null}
-          /> */
+           
             <ChatSidebar
               onClose={() => setSidebarOpen(false)}
               onSelectChat={(chat) => {

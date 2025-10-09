@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getSocket } from "../../lib/socket";
-import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
+import { api } from "../../lib/api";
 
 type Chat = {
   chatId: string;
@@ -51,14 +51,7 @@ export default function ChatSidebar({
 
     const fetchChats = async () => {
       try {
-        const res = await axios.get<ChatResponse[]>(
-          "http://localhost:5000/api/chat",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const res = await api.get<ChatResponse[]>("/api/chat");
 
         const normalized = res.data.map((c: any) => {
           console.log("chat data", res.data);
@@ -89,14 +82,7 @@ export default function ChatSidebar({
         return;
       }
       try {
-        const res = await axios.get<SearchResponse[]>(
-          `http://localhost:5000/api/chat/search/users?q=${search}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const res = await api.get<SearchResponse[]>(`api/chat/search/users`,{params: { q: search },});
         setSearchResults(
           res.data.map((u: any) => ({ userId: u.id, name: u.name }))
         );
@@ -111,13 +97,7 @@ export default function ChatSidebar({
   // ✅ mark as read
   const markChatAsRead = async (chatId: string) => {
     try {
-      await axios.post(
-        `http://localhost:5000/api/chat/${chatId}/read`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      await api.post(`/api/chat/${chatId}/read`);
 
       setChats((prev) =>
         prev.map((chat) =>
@@ -146,15 +126,7 @@ export default function ChatSidebar({
 
   async function createOrGetChat(participantId: string) {
     try {
-      const res = await axios.post<{ id: string }>(
-        "http://localhost:5000/api/chat",
-        { participantId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await api.post<{ id: string }>("/api/chat",{ participantId });
       const chatId = res.data.id;
       onSelectChat(chatId);
       markChatAsRead(chatId);

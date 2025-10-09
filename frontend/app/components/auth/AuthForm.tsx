@@ -1,8 +1,7 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import axios from "axios";
-import { useAuth } from "@/app/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { api } from "@/app/lib/api";
 
 interface Field {
   name: string;
@@ -17,8 +16,8 @@ interface AuthFormProps<T> {
   submitLabel: string;
   onSuccess?: (response: any) => void;
 }
-interface ApiResponse{
-  message:string;
+interface ApiResponse {
+  message: string;
 }
 
 function AuthForm<T extends Record<string, any>>({
@@ -46,7 +45,7 @@ function AuthForm<T extends Record<string, any>>({
     setMessage(`${submitLabel}...`);
 
     try {
-      const res = await axios.post<ApiResponse>(endpoint, form);
+      const res = await api.post<ApiResponse>(endpoint, form);
       console.log(res);
       setMessage(res.data.message || `${submitLabel} successful!`);
       // login(res.data.token);

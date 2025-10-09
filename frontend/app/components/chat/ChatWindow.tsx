@@ -4,8 +4,8 @@ import ChatHeader from "./ChatHeader";
 import MessageBubble from "./MessageBubble";
 import MessageInput from "./MessageInput";
 import { getSocket } from "../../lib/socket";
-import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
+import { api } from "../../lib/api";
 
 type Message = {
   id: string;
@@ -44,16 +44,12 @@ if(!socket)return;
 
     const fetchData = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/chat/${chatId}/messages`,
-          { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-        );
-        setMessages((res.data as any).messages ?? res.data);
+        const res = await api.get(`/api/chat/${chatId}/messages`);
 
-        const chatRes = await axios.get<Chat>(
-          `http://localhost:5000/api/chat/${chatId}`,
-          { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-        );
+        setMessages((res.data as any).messages ?? res.data);
+        
+        const chatRes = await api.get<Chat>(`/api/chat/${chatId}`);
+      
 
         const otherUser = chatRes.data.participants.find(
           (p: any) => p.id !== user.id

@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useState, useEffect, useContext } from "react";
-import axios from "axios";
 import { getSocket } from "../lib/socket";
+import { api } from "../lib/api";
 
 interface User {
   id: string;
@@ -19,7 +19,9 @@ const socket = getSocket();
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,22 +33,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
-    axios
-      .get("http://localhost:5000/api/auth/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    api
+      .get("api/auth/me")
       .then((res) => setUser(res.data as User))
       .catch(() => setUser(null))
-      .then(() => setLoading(false));//work as finally
+      .then(() => setLoading(false)); //work as finally
   }, []);
 
   //   Call this after login
   const login = async (token: string) => {
     localStorage.setItem("token", token);
     try {
-      const res = await axios.get("http://localhost:5000/api/auth/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get("/api/auth/me");
       setUser(res.data as User);
     } catch {
       setUser(null);
@@ -54,9 +52,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-     if (socket && user?.id) {
-    socket.emit("user_offline", user.id);  // 👈 tell server I'm offline
-  }
+    if (socket && user?.id) {
+      socket.emit("user_offline", user.id); // 👈 tell server I'm offline
+    }
     localStorage.removeItem("token");
     setUser(null);
   };
