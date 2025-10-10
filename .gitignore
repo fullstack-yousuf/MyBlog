@@ -7,6 +7,7 @@
 # 📦 Node dependencies
 # -------------------------------
 node_modules/
+backend-nestjs/node_modules/
 frontend/node_modules/
 backend/node_modules/
 npm-debug.log*
@@ -22,6 +23,7 @@ pnpm-debug.log*
 .env.*
 frontend/.env
 backend/.env
+backend-nestjs/.env
 
 # -------------------------------
 # 🏗️ Build & Output directories

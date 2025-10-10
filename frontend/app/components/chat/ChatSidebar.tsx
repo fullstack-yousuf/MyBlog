@@ -51,7 +51,7 @@ export default function ChatSidebar({
 
     const fetchChats = async () => {
       try {
-        const res = await api.get<ChatResponse[]>("/api/chat");
+        const res = await api.get<ChatResponse[]>("/chat");
 
         const normalized = res.data.map((c: any) => {
           console.log("chat data", res.data);
@@ -82,7 +82,7 @@ export default function ChatSidebar({
         return;
       }
       try {
-        const res = await api.get<SearchResponse[]>(`api/chat/search/users`,{params: { q: search },});
+        const res = await api.get<SearchResponse[]>(`chat/search/users`,{params: { q: search },});
         setSearchResults(
           res.data.map((u: any) => ({ userId: u.id, name: u.name }))
         );
@@ -97,7 +97,7 @@ export default function ChatSidebar({
   // ✅ mark as read
   const markChatAsRead = async (chatId: string) => {
     try {
-      await api.post(`/api/chat/${chatId}/read`);
+      await api.post(`/chat/${chatId}/read`);
 
       setChats((prev) =>
         prev.map((chat) =>
@@ -126,7 +126,7 @@ export default function ChatSidebar({
 
   async function createOrGetChat(participantId: string) {
     try {
-      const res = await api.post<{ id: string }>("/api/chat",{ participantId });
+      const res = await api.post<{ id: string }>("/chat",{ participantId });
       const chatId = res.data.id;
       onSelectChat(chatId);
       markChatAsRead(chatId);

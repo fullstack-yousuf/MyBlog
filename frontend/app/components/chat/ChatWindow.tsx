@@ -44,11 +44,11 @@ if(!socket)return;
 
     const fetchData = async () => {
       try {
-        const res = await api.get(`/api/chat/${chatId}/messages`);
+        const res = await api.get(`/chat/${chatId}/messages`);
 
         setMessages((res.data as any).messages ?? res.data);
         
-        const chatRes = await api.get<Chat>(`/api/chat/${chatId}`);
+        const chatRes = await api.get<Chat>(`/chat/${chatId}`);
       
 
         const otherUser = chatRes.data.participants.find(

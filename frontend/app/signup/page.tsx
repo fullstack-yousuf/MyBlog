@@ -25,7 +25,7 @@ const SignupPage = () => {
     <AuthForm<SignupForm>
       initialValues={initialSignupValues}
       fields={signupFields}
-      endpoint="http://localhost:5000/api/auth/register"
+      endpoint="http://localhost:5000/auth/register"
       submitLabel="Sign Up"
     />
   );
