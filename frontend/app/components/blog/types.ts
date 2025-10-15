@@ -1,42 +1,67 @@
-export interface UserRef {
-  id?: string;
-  name?: string;
+
+export interface Author {
+  id: string;
+  name: string;
   email?: string;
 }
 
 export interface Comment {
-  id?: string;
-  user: UserRef | string;
+  id: string;
+  author: Author;
   text: string;
-  createdAt?: string;
+  createdAt: string;
 }
 
 export interface Post {
   id: string;
   title: string;
   content: string;
-  author: { id: string; name: string; email: string };
-  authorName?: string;
+  author: Author;
   likeCount: number;
   likedByUser: boolean;
-  likes: string[];
-  commentCount?: number;
-  comments?: {
-    id: string; // ✅ Add this
-    user: { id: string; name: string };
-    text: string;
-    createdAt: string;
-  }[];
+  likes: { id: number; userId: number }[];
+  commentCount: number;
+  comments: Comment[];
   createdAt: string;
   updatedAt: string;
 }
 
-export interface PostListResponse {
-  posts: Post[];
-  total: number;
-  page: number;
-  pages: number;
-}
+// export interface Post {
+//   id: string;
+//   title: string;
+//   content: string;
+//   author: { id: string; name: string; email: string };
+//   authorName?: string;
+//   likeCount: number;
+//   likedByUser: boolean;
+//   likes: string[];
+//   commentCount?: number;
+//   comments?: {
+//     id: string; // ✅ Add this
+//     author: { id: string; name: string };
+//     text: string;
+//     createdAt: string;
+//   }[];
+//   createdAt: string;
+//   updatedAt: string;
+// }
+
+//
+// export interface PostListResponse {
+//   posts: Post[];
+//   total: number;
+//   page: number;
+//   pages: number;
+// }
+export interface PostListResponse  {
+  data: Post[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+};
 
 // export interface Comment {
 //   text: string;

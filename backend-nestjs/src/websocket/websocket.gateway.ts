@@ -31,7 +31,7 @@ export class WebsocketGateway
   handleConnection(client: Socket): void {
     const authHeader = client.handshake.auth?.token;
     const token = authHeader?.startsWith('Bearer ')
-      ? authHeader.split(' ')[1]
+      ? authHeader. split(' ')[1]
       : authHeader;
 
     if (!token) {

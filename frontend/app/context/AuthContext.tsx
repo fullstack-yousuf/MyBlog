@@ -55,7 +55,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (socket && user?.id) {
       socket.emit("user_offline", user.id); // 👈 tell server I'm offline
     }
-    // localStorage.removeItem("token");
+    // console.log("its a user",user);
+    
+    localStorage.removeItem("token");
     setUser(null);
   };
 

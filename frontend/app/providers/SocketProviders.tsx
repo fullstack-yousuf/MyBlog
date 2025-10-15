@@ -2,14 +2,16 @@
 import { ReactNode, useEffect } from "react";
 import { getSocket } from "@/app/lib/socket";
 
+
 export const SocketProvider = ({ children }: { children: ReactNode }) => {
+
   useEffect(() => {
     const socket = getSocket();
     if(!socket)return;
-console.log("socket trigert",socket);
+// console.log("socket trigert",socket);
 
     socket.on("connect", () => {
-      console.log("✅ Socket connected:", socket.id);
+      console.log("✅ Socket connected:", socket.id); 
     });
 
     socket.on("disconnect", (reason) => {

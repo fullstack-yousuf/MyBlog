@@ -17,7 +17,12 @@ export interface PostCardProps {
   isMyPost?: boolean;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post, onLike, onOpen, isMyPost }) => {
+const PostCard: React.FC<PostCardProps> = ({
+  post,
+  onLike,
+  onOpen,
+  isMyPost,
+}) => {
   const [expanded, setExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const commentMutation = useComment();
@@ -36,8 +41,14 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onOpen, isMyPost }) =
   );
 
   const handleToggleExpand = useCallback(() => setExpanded((p) => !p), []);
-  const handleToggleComments = useCallback(() => setShowComments((p) => !p), []);
-  const handleLikeClick = useCallback(() => onLike?.(post.id), [onLike, post.id]);
+  const handleToggleComments = useCallback(
+    () => setShowComments((p) => !p),
+    []
+  );
+  const handleLikeClick = useCallback(
+    () => onLike?.(post.id),
+    [onLike, post.id]
+  );
   const handleOpen = useCallback(() => onOpen?.(post.id), [onOpen, post.id]);
 
   const truncatedContent =

@@ -9,10 +9,10 @@ export type PostsParams = {
   page?: number;
   limit?: number;
   sortBy?: "createdAt" | "likes";
-  order?: "asc" | "desc";
+  order?: "ASC" | "DESC";
 };
 export const usePosts = (params: PostsParams = {}) => {
-  const { page = 1, limit = 5, sortBy = "createdAt", order = "desc" } = params;
+  const { page = 1, limit = 5, sortBy = "createdAt", order = "DESC" } = params;
 
  return useQuery<PostListResponse>({
     queryKey: ["posts", page, limit, sortBy, order],
@@ -20,6 +20,8 @@ export const usePosts = (params: PostsParams = {}) => {
       const res = await api.get<PostListResponse>("/posts", {
         params: { page, limit, sortBy, order },
       });
+      console.log("front end data",res);
+      
       return res.data; // ✅ TS now knows this is PostListResponse
     },
     placeholderData: (prev) => prev,
@@ -46,7 +48,7 @@ export const useCreatePost = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload: { title: string; content: string }) =>
-      api.post("/posts", payload),
+     await api.post("/posts", payload),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["posts"] });
       qc.invalidateQueries({ queryKey: ["myPosts"] });
@@ -130,7 +132,7 @@ export type FilterState = Pick<PostsParams, "sortBy" | "order">;
 
 const DEFAULT_FILTERS: FilterState = {
   sortBy: "createdAt",
-  order: "desc",
+  order: "DESC",
 };
 
 

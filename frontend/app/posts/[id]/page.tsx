@@ -17,7 +17,7 @@ const page = ({ params }: { params: Promise<{ id: string }> }) => {
   const { data: post, isLoading } = usePost(id);
   const comment = useComment();
   const like = useLikePost();
-console.log(post);
+// console.log("asdfwerwe",post);
 
   const handleAddComment = async (text: string) => {
     try {

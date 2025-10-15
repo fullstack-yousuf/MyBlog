@@ -8,11 +8,13 @@ import Modal from "../components/ui/Modal";
 import PostCard from "../components/blog/PostCard";
 import PostForm from "../components/blog/PostForm";
 import { FilterBar } from "../components/ui/FilterBar";
+import { useRealtimePosts } from "../hooks/useRealtimePosts";
 
 const PostsPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
+  useRealtimePosts(); // 👈 enables live updates
 
   // ✅ Clean filter logic
   const { filters, applyFilters, clearFilters, DEFAULT_FILTERS } = usePostFilters();
@@ -20,9 +22,13 @@ const PostsPage: React.FC = () => {
   const { data, isLoading } = usePosts({ page, limit: 5, ...filters });
   const create = useCreatePost();
   const like = useLikePost();
+  console.log("page log data", data);
+  
 
   const handleCreate = async (payload: { title: string; content: string }) => {
     try {
+      console.log("paylog: ",payload);
+      
       await create.mutateAsync(payload);
       notify("✅ Post created successfully", "success");
       setIsModalOpen(false);
@@ -35,6 +41,7 @@ const PostsPage: React.FC = () => {
   const handleLike = async (id: string) => {
     try {
       await like.mutateAsync(id);
+      notify("✅ Post created successfully", "success");
     } catch {
       notify("❌ Like failed", "error");
     }

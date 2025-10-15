@@ -14,7 +14,12 @@ import { WebsocketModule } from './websocket/websocket.module';
     // ConfigModule.forRoot({
     //   isGlobal: true, // allows use in all modules without re-importing
     // })
-    AuthModule, AppConfigModule, DatabaseModule, WebsocketModule],
+    AuthModule,
+    AppConfigModule,
+    DatabaseModule,
+    WebsocketModule,
+    PostsModule,
+  ],
   // controllers: [AppController],
   // providers: [AppService],
 })

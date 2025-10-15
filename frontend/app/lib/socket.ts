@@ -9,13 +9,12 @@ export const getSocket = () => {
   if (!socket) {
     const token = localStorage.getItem("token");
 
-    if (token) {
-      console.log("✅ Token exists:", token);
-    } else {
+    if (!token) {
       console.log("❌ No token found");
     }
+    console.log("B ", socket);
 
-    socket = io("http://localhost:5000", {
+    socket = io("http://localhost:5000", {  
       transports: ["websocket"],
       auth: {
         token, // ✅ send raw token only
@@ -37,7 +36,6 @@ export const getSocket = () => {
 
   return socket;
 };
-
 
 // // app/lib/socket.ts
 // import { io, Socket } from "socket.io-client";
