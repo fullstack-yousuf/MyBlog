@@ -16,8 +16,13 @@ import { notify } from "../../lib/notificationService";
 import type { Post } from "../../components/blog/types";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Banner from "@/app/components/ui/Banner";
+import { useAuth } from "@/app/context/AuthContext";
 
 const page: React.FC = () => {
+
+  const userid =useAuth();
+  console.log("the useris ",userid);
+  
   const router = useRouter();
   const { data: posts = [], isLoading } = useMyPosts();
   console.log("thi sis the ", posts);

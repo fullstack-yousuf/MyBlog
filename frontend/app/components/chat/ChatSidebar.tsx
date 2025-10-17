@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { getSocket } from "../../lib/socket";
 import { useAuth } from "../../context/AuthContext";
 import { api } from "../../lib/api";
@@ -22,126 +23,113 @@ type Props = {
   activeChat: string | null;
 };
 
-interface ChatResponse {
-  id: string;
-  participants: { id: string; name: string }[];
-  lastMessage?: { text: string };
-  unread: number;
-}
-interface SearchResponse {
-  userId: string;
-  name: string;
-}
-export default function ChatSidebar({
-  onClose,
-  onSelectChat,
-  activeChat,
-}: Props) {
+export default function ChatSidebar({ onClose, onSelectChat, activeChat }: Props) {
   const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [chats, setChats] = useState<Chat[]>([]);
   const [searchResults, setSearchResults] = useState<SearchUser[]>([]);
   const socket = getSocket();
-  const token = localStorage.getItem("token");
 
-  if (!socket) return;
-  // ✅ fetch chats for logged-in user
+  /** 🔹 1. Fetch user chats once user is loaded */
   useEffect(() => {
     if (!user) return;
 
     const fetchChats = async () => {
       try {
-        const res = await api.get<ChatResponse[]>("/chat");
-
-        const normalized = res.data.map((c: any) => {
-          console.log("chat data", res.data);
-
-          const otherUser = c.participants.find((p: any) => p.id !== user.id);
-          return {
-            chatId: c.id,
-            name: otherUser?.name || "Unknown",
-            lastMessage: c.lastMessage?.text || "",
-            unread: c.unread,
-          };
-        });
-
-        setChats(normalized);
+        const { data } = await api.get<Chat[]>("/chat");
+        setChats(
+          data.map((c) => ({
+            chatId: c.chatId,
+            name: c.name || "Unknown",
+            lastMessage: c.lastMessage || "",
+            unread: c.unread ?? 0,
+          }))
+        );
       } catch (err) {
-        console.error("Failed to fetch chats:", err);
+        console.error("❌ Failed to fetch chats:", err);
       }
     };
 
     fetchChats();
   }, [user]);
 
-  // ✅ search users
+  /** 🔹 2. Debounced user search */
   useEffect(() => {
-    const handler = setTimeout(async () => {
-      if (!search) {
+    const timeout = setTimeout(async () => {
+      if (!search.trim()) {
         setSearchResults([]);
         return;
       }
+
       try {
-        const res = await api.get<SearchResponse[]>(`chat/search/users`,{params: { q: search },});
-        setSearchResults(
-          res.data.map((u: any) => ({ userId: u.id, name: u.name }))
-        );
+        const { data } = await api.get<SearchUser[]>(`/chat/search/users`, {
+          params: { q: search },
+        });
+        setSearchResults(data.map((u) => ({ userId: u.userId, name: u.name })));
       } catch (err) {
-        console.error("Failed to search users:", err);
+        console.error("❌ User search failed:", err);
       }
     }, 300);
 
-    return () => clearTimeout(handler);
+    return () => clearTimeout(timeout);
   }, [search]);
 
-  // ✅ mark as read
-  const markChatAsRead = async (chatId: string) => {
+  /** 🔹 3. Mark chat as read (local + backend) */
+  const markChatAsRead = useCallback(async (chatId: string) => {
     try {
       await api.post(`/chat/${chatId}/read`);
-
       setChats((prev) =>
         prev.map((chat) =>
           chat.chatId === chatId ? { ...chat, unread: 0 } : chat
         )
       );
     } catch (err) {
-      console.error("Failed to mark chat as read:", err);
+      console.error("❌ Failed to mark chat as read:", err);
     }
-  };
+  }, []);
 
-  // ✅ listen to socket updates
+  /** 🔹 4. Handle WebSocket unread updates */
   useEffect(() => {
-    socket.on("unread_update", ({ chatId, unread }) => {
+    if (!socket) return;
+
+    const handleUnreadUpdate = ({ chatId, unread }: { chatId: string; unread: number }) => {
       setChats((prev) =>
         prev.map((chat) =>
           chat.chatId === chatId ? { ...chat, unread } : chat
         )
       );
-    });
+    };
 
+    socket.on("unread_update", handleUnreadUpdate);
     return () => {
-      socket.off("unread_update");
+      socket.off("unread_update", handleUnreadUpdate);
     };
   }, [socket]);
 
-  async function createOrGetChat(participantId: string) {
-    try {
-      const res = await api.post<{ id: string }>("/chat",{ participantId });
-      const chatId = res.data.id;
-      onSelectChat(chatId);
-      markChatAsRead(chatId);
-      onClose?.();
-    } catch (err) {
-      console.error("Failed to create/get chat:", err);
-      throw err;
-    }
-  }
+  /** 🔹 5. Create or get chat, then open it */
+  const createOrGetChat = useCallback(
+    async (participantId: string) => {
+      try {
+        const { data } = await api.post<{ id: string }>("/chat", { participantId });
+        const chatId = data.id;
 
-  const list = search.length > 0 ? searchResults : chats;
-  console.log("list log ", list);
+        // Immediately show or refresh that chat
+        onSelectChat(chatId);
+        markChatAsRead(chatId);
+        onClose?.();
+      } catch (err) {
+        console.error("❌ Failed to create/get chat:", err);
+      }
+    },
+    [onSelectChat, onClose, markChatAsRead]
+  );
+
+  /** 🔹 6. Decide which list to show */
+  const list = useMemo(() => (search ? searchResults : chats), [search, chats, searchResults]);
 
   return (
-    <div className="flex flex-col h-full ">
+    <div className="flex flex-col h-full">
+      {/* 🔍 Search bar */}
       <div className="p-3 bg-gray-100">
         <input
           type="text"
@@ -152,26 +140,25 @@ export default function ChatSidebar({
         />
       </div>
 
+      {/* 💬 Chat List */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-blue-50">
         {list.map((item) =>
           "userId" in item ? (
-            // 👉 New chat (search result)
+            // ➕ Search result
             <div
               key={item.userId}
               onClick={() => createOrGetChat(item.userId)}
               className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer bg-white hover:bg-gray-100 transition shadow-sm"
             >
-              {/* Avatar */}
               <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
                 <span className="text-gray-700 font-medium">
                   {item.name?.charAt(0).toUpperCase() || "?"}
                 </span>
               </div>
-              {/* Name */}
               <p className="font-medium text-gray-900">{item.name}</p>
             </div>
           ) : (
-            // 👉 Existing chat
+            // 💬 Existing chat
             <div
               key={item.chatId}
               onClick={() => {
@@ -185,21 +172,18 @@ export default function ChatSidebar({
                   : "bg-white border-gray-200 hover:bg-gray-100"
               }`}
             >
-              {/* Left side: avatar + name + last message */}
               <div className="flex items-center gap-3">
-                {/* Avatar */}
                 <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
                   <span className="text-gray-700 font-medium">
                     {item.name?.charAt(0).toUpperCase() || "?"}
                   </span>
                 </div>
 
-                {/* Name + Last Message */}
                 <div className="flex flex-col">
                   <p className="font-medium text-gray-900">{item.name}</p>
                   {item.lastMessage && (
                     <p
-                      className="text-sm/3 text-gray-500 truncate max-w-[160px]"
+                      className="text-sm text-gray-500 truncate max-w-[160px]"
                       title={item.lastMessage}
                     >
                       {item.lastMessage}
@@ -208,7 +192,6 @@ export default function ChatSidebar({
                 </div>
               </div>
 
-              {/* Right side: unread badge */}
               {item.unread && item.unread > 0 && (
                 <span className="bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
                   {item.unread}

@@ -15,6 +15,7 @@ export default function ChatLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeChat, setActiveChat] = useState<string>(""); // ✅ store chat object
 
+console.log("the active chat0" ,activeChat);
 
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-4rem)] bg-gray-50 p-4">

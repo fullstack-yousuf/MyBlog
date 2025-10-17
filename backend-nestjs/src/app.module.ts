@@ -19,6 +19,7 @@ import { WebsocketModule } from './websocket/websocket.module';
     DatabaseModule,
     WebsocketModule,
     PostsModule,
+    ChatModule,
   ],
   // controllers: [AppController],
   // providers: [AppService],

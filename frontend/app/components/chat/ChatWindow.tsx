@@ -1,5 +1,5 @@
 "use client";
-import { useEffect,useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import ChatHeader from "./ChatHeader";
 import MessageBubble from "./MessageBubble";
 import MessageInput from "./MessageInput";
@@ -18,7 +18,6 @@ interface ChatWindowProps {
   chatId: string | null;
 }
 
-
 interface Chat {
   id: string;
   participants: { id: string; name: string }[];
@@ -29,15 +28,15 @@ interface Chat {
 export default function ChatWindow({ chatId }: ChatWindowProps) {
   const { user } = useAuth();
   // console.log("wher data in : ", user);
-  
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [chatName, setChatName] = useState<string>("");
   const [otherUserId, setOtherUserId] = useState<string | null>(null);
   const [isOnline, setIsOnline] = useState<boolean>(false);
 
   const socket = getSocket();
-if(!socket)return;
-// console.log("user login window", user);
+  if (!socket) return;
+  console.log("user login window", user);
 
   useEffect(() => {
     if (!chatId || !user) return;
@@ -45,15 +44,20 @@ if(!socket)return;
     const fetchData = async () => {
       try {
         const res = await api.get(`/chat/${chatId}/messages`);
+        console.log("the window  res", res);
 
         setMessages((res.data as any).messages ?? res.data);
-        
+
         const chatRes = await api.get<Chat>(`/chat/${chatId}`);
-      
+        console.log("the window  chatres", chatRes);
+        console.log("the window  user", user);
+        console.log("the window  chat id", chatId);
 
         const otherUser = chatRes.data.participants.find(
           (p: any) => p.id !== user.id
         );
+        console.log("the window  otherid", otherUser);
+
         setChatName(otherUser?.name || "Unknown");
         setOtherUserId(otherUser?.id || null);
       } catch (err) {
@@ -85,18 +89,48 @@ if(!socket)return;
     };
   }, [chatId, socket, handleNewMessage]);
 
+useEffect(() => {
+  if (!chatId || !socket) return;
+
+  socket.emit("join_chat", chatId);
+
+  // 🔥 Listen for new incoming messages
+  socket.on("new_message", ({ chatId: incomingChatId, message }) => {
+    if (incomingChatId === chatId) {
+      setMessages((prev) => [...prev, message]);
+    }
+  });
+
+  // Optional: typing indicators
+  socket.on("user_typing", (userId) => {
+    console.log(`✍️ User ${userId} is typing...`);
+  });
+
+  socket.on("user_stop_typing", (userId) => {
+    console.log(`🛑 User ${userId} stopped typing`);
+  });
+
+  return () => {
+    socket.emit("leave_chat", chatId);
+    socket.off("new_message");
+    socket.off("user_typing");
+    socket.off("user_stop_typing");
+  };
+}, [chatId, socket]);
+
+
   useEffect(() => {
-    console.log("socket and other user id : ",socket,"id is",otherUserId);
-    
+    console.log("socket and other user id : ", socket, "id is", otherUserId);
+
     if (!socket || !otherUserId) return;
 
     const handleUserOnline = (id: string) => {
-      console.log("this is a id online",id);
-      
+      console.log("this is a id online", id);
+
       if (id === otherUserId) setIsOnline(true);
     };
     const handleUserOffline = (id: string) => {
-      console.log("this is a id offline",id);
+      console.log("this is a id offline", id);
       if (id === otherUserId) setIsOnline(false);
     };
 
@@ -113,7 +147,7 @@ if(!socket)return;
     };
   }, [socket, otherUserId]);
 
-   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   // scroll to bottom when messages change
   useEffect(() => {
@@ -127,7 +161,7 @@ if(!socket)return;
       </div>
     );
   }
-// console.log("message log ",messages);
+  // console.log("message log ",messages);
 
   return (
     <div className="flex flex-col h-full">

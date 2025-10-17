@@ -37,6 +37,7 @@ export class AuthService {
     if (!user || !(await bcrypt.compare(dto.password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
     }
+// console.log("loging user",user);
 
     const token = this.signToken( user.id );
     return { token, user: { id: user.id, name: user.name, email: user.email } };
