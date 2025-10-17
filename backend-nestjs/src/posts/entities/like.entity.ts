@@ -11,6 +11,6 @@ export class Like {
   @ManyToOne(() => User, (user) => user.likes)
   user: User;
 
-  @ManyToOne(() => Post, (post) => post.likes)
+  @ManyToOne(() => Post, (post) => post.likes,{onDelete:"CASCADE"})
   post: Post;
 }

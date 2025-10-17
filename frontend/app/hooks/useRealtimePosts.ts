@@ -22,6 +22,7 @@ interface CommentAddedEvent {
 /**
  * React Query cache-aware real-time updates for posts.
  */
+// useRealtimePosts.ts
 export const useRealtimePosts = () => {
   const qc = useQueryClient();
 
@@ -29,32 +30,40 @@ export const useRealtimePosts = () => {
     const socket = getSocket();
     if (!socket) return;
 
-    // ✅ Handle real-time like updates
+    // ✅ Like event
     const handleLikeUpdated = (data: LikeUpdatedEvent) => {
       qc.setQueryData(["posts"], (old: any) => {
-        if (!old || !old.posts) return old;
-
+        if (!old?.posts) return old;
         return {
           ...old,
           posts: old.posts.map((p: any) =>
             p.id === data.postId
-              ? { ...p, likeCount: data.likeCount }
+              ? {
+                  ...p,
+                  likeCount: data.likeCount,
+                  likedByUser:
+                    p.likedByUser !== undefined ? data.liked : p.likedByUser,
+                }
               : p
           ),
         };
       });
 
-      // Update a single post query if open
       qc.setQueryData(["post", data.postId], (old: any) =>
-        old ? { ...old, likeCount: data.likeCount } : old
+        old
+          ? {
+              ...old,
+              likeCount: data.likeCount,
+              likedByUser: data.liked,
+            }
+          : old
       );
     };
 
-    // ✅ Handle real-time comment updates
+    // ✅ Comment event
     const handleCommentAdded = (data: CommentAddedEvent) => {
       qc.setQueryData(["posts"], (old: any) => {
-        if (!old || !old.posts) return old;
-
+        if (!old?.posts) return old;
         return {
           ...old,
           posts: old.posts.map((p: any) =>
@@ -62,20 +71,20 @@ export const useRealtimePosts = () => {
               ? {
                   ...p,
                   commentCount: (p.commentCount ?? 0) + 1,
-                  comments: [...(p.comments ?? []), data.comment],
                 }
               : p
           ),
         };
       });
 
-      // Update single post query
       qc.setQueryData(["post", data.postId], (old: any) =>
         old
           ? {
               ...old,
               commentCount: (old.commentCount ?? 0) + 1,
-              comments: [...(old.comments ?? []), data.comment],
+              comments: old.comments?.some((c: any) => c.id === data.comment.id)
+                ? old.comments
+                : [...(old.comments ?? []), data.comment],
             }
           : old
       );

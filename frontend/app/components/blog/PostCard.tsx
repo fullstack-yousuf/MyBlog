@@ -26,6 +26,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const [expanded, setExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const commentMutation = useComment();
+console.log("post loging ",post);
 
   const handleAddComment = useCallback(
     async (text: string) => {
@@ -61,10 +62,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
   // ✅ Comment count works for BOTH feed and my blogs
   const commentCount =
-    post.commentCount ??
-    (Array.isArray(post.comments)
-      ? post.comments.filter((c) => c && (c as any).id != null).length
-      : 0);
+    post.commentCount ;
 
   return (
     <article className="bg-white shadow rounded-xl border border-gray-200 p-4 sm:p-6 transition hover:shadow-md">

@@ -25,10 +25,10 @@ export class Post {
   @ManyToOne(() => User, (user) => user.posts, { eager: true })//you can directly access comment.author  no relationship['author']
   author: User;
 
-  @OneToMany(() => Comment, (comment) => comment.post, { cascade: true })
+  @OneToMany(() => Comment, (comment) => comment.post, { cascade: true, onDelete:"CASCADE"})
   comments: Comment[];
 
-  @OneToMany(() => Like, (like) => like.post, { cascade: true })
+  @OneToMany(() => Like, (like) => like.post, { cascade: true,onDelete:"CASCADE" })
   likes: Like[];
 
   @CreateDateColumn()

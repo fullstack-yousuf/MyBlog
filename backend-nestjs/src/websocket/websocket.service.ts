@@ -21,6 +21,7 @@ export class WebsocketService {
   }
 
   broadcast(event: string, data: any) {
+    
     this.clients.forEach((client) => client.emit(event, data));
   }
 }

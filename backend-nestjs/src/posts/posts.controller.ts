@@ -21,10 +21,12 @@ export class PostsController {
   findMine(@Req() req) {
     return this.postsService.findMyPosts(req.user);
   }
-
+  
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOne(id);
+  @UseGuards(AuthGuard('jwt'))
+  findOne(@Param('id') id: string,@Request() req) {
+     const userId = req.user.id; 
+    return this.postsService.findOne(id, userId);
   }
 
   @HttpPost()
@@ -34,7 +36,7 @@ export class PostsController {
     
     return this.postsService.create(dto, req.user);
   }
-
+ 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'))
   update(@Param('id') id: string, @Body() dto: UpdatePostDto, @Req() req) {
@@ -44,6 +46,8 @@ export class PostsController {
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
   delete(@Param('id') id: string, @Req() req) {
+    console.log("detele the id",id);
+    
     return this.postsService.delete(id, req.user);
   }
 

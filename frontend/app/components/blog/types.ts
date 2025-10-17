@@ -11,20 +11,47 @@ export interface Comment {
   text: string;
   createdAt: string;
 }
-
 export interface Post {
   id: string;
   title: string;
   content: string;
   author: Author;
   likeCount: number;
-  likedByUser: boolean;
-  likes: { id: number; userId: number }[];
   commentCount: number;
-  comments: Comment[];
+  comments:{
+    id: string; // ✅ Add this
+    author: { id: string; name: string };
+    text: string;
+    createdAt: string;
+  }[];
+  likedByUser: boolean;
   createdAt: string;
   updatedAt: string;
 }
+export interface Pagination {
+  total: number;
+  page: number;
+  pages: number;
+  limit: number;
+}
+
+export interface PostListResponse {
+  data: Post[];
+  pagination: Pagination;
+}
+// export interface Post {
+//   id: string;
+//   title: string;
+//   content: string;
+//   author: Author;
+//   likeCount: number;
+//   likedByUser: boolean;
+//   likes: { id: number; userId: number }[];
+//   commentCount: number;
+//   comments: Comment[];
+//   createdAt: string;
+//   updatedAt: string;
+// }
 
 // export interface Post {
 //   id: string;
@@ -53,15 +80,15 @@ export interface Post {
 //   page: number;
 //   pages: number;
 // }
-export interface PostListResponse  {
-  data: Post[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-};
+// export interface PostListResponse  {
+//   data: Post[];
+//   meta: {
+//     total: number;
+//     page: number;
+//     limit: number;
+//     pages: number;
+//   };
+// };
 
 // export interface Comment {
 //   text: string;

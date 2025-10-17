@@ -19,13 +19,13 @@ const SORT_OPTIONS: DropdownOption[] = [
 const getOrderOptions = (sortBy: string): DropdownOption[] => {
   if (sortBy === "likes") {
     return [
-      { id: "desc", name: "Most Liked" },
-      { id: "asc", name: "Least Liked" },
+      { id: "DESC", name: "Most Liked" },
+      { id: "ASC", name: "Least Liked" },
     ];
   }
   return [
-    { id: "desc", name: "Newest" },
-    { id: "asc", name: "Oldest" },
+    { id: "DESC", name: "Newest" },
+    { id: "ASC", name: "Oldest" },
   ];
 };
 
@@ -61,7 +61,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   const handleApply = () => {
     onApply({
       sortBy: sortBy.id as "createdAt" | "likes",
-      order: order.id as "asc" | "desc",
+      order: order.id as "ASC" | "DESC",
     });
   };
 

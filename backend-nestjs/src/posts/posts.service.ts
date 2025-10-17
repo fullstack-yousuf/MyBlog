@@ -26,18 +26,75 @@ export class PostsService {
     @Inject(forwardRef(() => WebsocketService))
     private readonly websocketService: WebsocketService, // ✅ Inject the socket service
   ) {}
-  async findAll(query: PostQueryDto, currentUserId: number) {
+  // async findAll(query: PostQueryDto, currentUserId: number) {
+  //   const { page = 1, limit = 5, sortBy = 'createdAt', order = 'DESC' } = query;
+
+  //   const [posts, total] = await this.postRepo.findAndCount({
+  //     relations: ['author', 'comments', 'likes', 'likes.user'], // ✅ include user in likes
+  //     order: { [sortBy]: order },
+  //     take: limit,
+  //     skip: (page - 1) * limit,
+  //   });
+
+  //   return {
+  //     posts: posts.map((p) => ({
+  //       id: p.id,
+  //       title: p.title,
+  //       content: p.content,
+  //       author: {
+  //         id: p.author?.id,
+  //         name: p.author?.name,
+  //         email: p.author?.email,
+  //       },
+  //       likeCount: p.likes?.length ?? 0,
+  //       commentCount: p.comments?.length ?? 0,
+  //       likedByUser:
+  //         p.likes?.some((like) => like.user?.id === currentUserId) ?? false, // ✅ safe
+  //       createdAt: p.createdAt,
+  //       updatedAt: p.updatedAt,
+  //     })),
+  //     total,
+  //     page,
+  //     pages: Math.ceil(total / limit),
+  //   };
+  // }
+
+  // async findAll(query: PostQueryDto,currentUserId:number) {
+  //   const { page, limit, sortBy, order } = query;
+ async findAll(query: PostQueryDto, currentUserId: number) {
     const { page = 1, limit = 5, sortBy = 'createdAt', order = 'DESC' } = query;
 
-    const [posts, total] = await this.postRepo.findAndCount({
-      relations: ['author', 'comments', 'likes', 'likes.user'], // ✅ include user in likes
-      order: { [sortBy]: order },
-      take: limit,
-      skip: (page - 1) * limit,
-    });
+    const qb = this.postRepo
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.author', 'author')
+      .leftJoinAndSelect('post.comments', 'comments')
+      .leftJoinAndSelect('comments.author', 'commentAuthor')
+      .leftJoinAndSelect('post.likes', 'likes')
+      .leftJoinAndSelect('likes.user', 'likeUser')
+      .loadRelationCountAndMap('post.likeCount', 'post.likes')
+      .loadRelationCountAndMap('post.commentCount', 'post.comments');
 
+    // ✅ Safe sorting logic
+    if (sortBy === 'likes') {
+      qb.addSelect((subQuery) => {
+        return subQuery
+          .select('COUNT(l.id)', 'likeCountOrder')
+          .from('like', 'l')
+          .where('l.postId = post.id');
+      }, 'likeCountOrder');
+
+      qb.orderBy('likeCountOrder', order);
+    } else {
+      qb.orderBy(`post.${sortBy}`, order);
+    }
+
+    qb.skip((page - 1) * limit).take(limit);
+
+    const [posts, total] = await qb.getManyAndCount();
+
+    // ✅ Transform and shape the data cleanly
     return {
-      posts: posts.map((p) => ({
+      data: posts.map((p) => ({
         id: p.id,
         title: p.title,
         content: p.content,
@@ -46,21 +103,32 @@ export class PostsService {
           name: p.author?.name,
           email: p.author?.email,
         },
-        likeCount: p.likes?.length ?? 0,
-        commentCount: p.comments?.length ?? 0,
+        likeCount: (p as any).likeCount ?? 0,
+        commentCount: (p as any).commentCount ?? 0,
+        comments: p.comments?.map((c) => ({
+          id: c.id,
+          text: c.text,
+          createdAt: c.createdAt,
+          author: {
+            id: c.author?.id,
+            name: c.author?.name,
+          },
+        })),
         likedByUser:
-          p.likes?.some((like) => like.user?.id === currentUserId) ?? false, // ✅ safe
+          p.likes?.some((like) => like.user?.id === currentUserId) ?? false,
         createdAt: p.createdAt,
         updatedAt: p.updatedAt,
       })),
-      total,
-      page,
-      pages: Math.ceil(total / limit),
+      pagination: {
+        total,
+        page,
+        pages: Math.ceil(total / limit),
+        limit,
+      },
     };
   }
 
-  // async findAll(query: PostQueryDto,currentUserId:number) {
-  //   const { page, limit, sortBy, order } = query;
+
 
   //   const [posts, total] = await this.postRepo.findAndCount({
   //     relations: ['author', 'comments', 'likes'],
@@ -85,7 +153,7 @@ export class PostsService {
   //   };
   // }
 
-  async findOne(id: string) {
+  async findOne(id: string,currentUserId:number) {
     const post = await this.postRepo.findOne({
       where: { id },
       relations: [
@@ -97,9 +165,38 @@ export class PostsService {
       ],
     });
     if (!post) throw new NotFoundException('Post not found');
-    return post;
-  }
+   // 🧠 Compute extra fields safely
+  const likeCount = post.likes?.length ?? 0;
+  const likedByUser =
+    post.likes?.some((like) => like.user?.id === currentUserId) ?? false;
+  const commentCount = post.comments?.length ?? 0;
 
+  // 🧩 Shape response — don't send password or unnecessary data
+  return {
+    id: post.id,
+    title: post.title,
+    content: post.content,
+    author: {
+      id: post.author?.id,
+      name: post.author?.name,
+      email: post.author?.email,
+    },
+    comments: post.comments?.map((c) => ({
+      id: c.id,
+      text: c.text,
+      createdAt: c.createdAt,
+      author: {
+        id: c.author?.id,
+        name: c.author?.name,
+      },
+    })),
+    likeCount,
+    commentCount,
+    likedByUser,
+    createdAt: post.createdAt,
+    updatedAt: post.updatedAt,
+  };
+}
   async create(dto: CreatePostDto, user: User) {
     const post = this.postRepo.create({ ...dto, author: user });
     console.log('this is a create post log ', post);
@@ -118,8 +215,10 @@ export class PostsService {
 
   async delete(id: string, user: User) {
     const post = await this.postRepo.findOne({
-      where: { id, author: { id: user.id } },
+      where: { id, author: { id: user.id } },      
     });
+    console.log("a data",post);
+    
     if (!post) throw new NotFoundException('Post not found or unauthorized');
     await this.postRepo.remove(post);
     return { success: true };
@@ -197,233 +296,3 @@ export class PostsService {
     }));
   }
 }
-// async toggleLike(postId: string, user: User) {
-//   if (!user?.id) throw new BadRequestException('User not authenticated');
-
-//   const post = await this.postRepo.findOne({
-//     where: { id: postId },
-//     relations: ['likes', 'likes.user'],
-//   });
-//   if (!post) throw new NotFoundException('Post not found');
-
-//   const existing = await this.likeRepo.findOne({
-//     where: { post: { id: postId }, user: { id: user.id } },
-//   });
-
-//   let liked: boolean;
-//   if (existing) {
-//     await this.likeRepo.remove(existing);
-//     liked = false;
-//   } else {
-//     const newLike = this.likeRepo.create({ post, user });
-//     await this.likeRepo.save(newLike);
-//     liked = true;
-//   }
-
-//   const likeCount = await this.likeRepo.count({
-//     where: { post: { id: postId } },
-//   });
-
-//   // ✅ Emit realtime update to all clients
-//   this.websocketService.broadcast('post:likeUpdated', {
-//     postId,
-//     liked,
-//     userId: user.id,
-//     likeCount,
-//   });
-
-//   return { postId, liked, likeCount };
-// }
-// async addComment(postId: string, text: string, user: User) {
-//   if (!text?.trim()) throw new BadRequestException('Comment cannot be empty');
-
-//   const post = await this.postRepo.findOne({ where: { id: postId } });
-//   if (!post) throw new NotFoundException('Post not found');
-
-//   const comment = this.commentRepo.create({
-//     text,
-//     post,
-//     author: user,
-//   });
-
-//   const saved = await this.commentRepo.save(comment);
-
-//   // ✅ Count total comments for post
-//   const commentCount = await this.commentRepo.count({
-//     where: { post: { id: postId } },
-//   });
-
-//   // ✅ Emit realtime new comment event
-//   this.websocketService.broadcast('post:commentAdded', {
-//     postId,
-//     comment: {
-//       id: saved.id,
-//       text: saved.text,
-//       author: { id: user.id, name: user.name, email: user.email },
-//       createdAt: saved.createdAt,
-//     },
-//     commentCount,
-//   });
-
-//   return saved;
-// }
-
-// async findMyPosts(user: User) {
-//   if (!user.id) throw new BadRequestException('User not authenticated');
-//   const posts = await this.postRepo.find({
-//     where: { author: { id: user.id } },
-//     relations: ['likes', 'comments'],
-//     order: { createdAt: 'DESC' },
-//   });
-
-//   return posts.map((p) => ({
-//     ...p,
-//     likeCount: p.likes?.length ?? 0,
-//     commentCount: p.comments?.length ?? 0,
-//   }));
-// }
-// }
-// import { Injectable, NotFoundException } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-// import { Post } from './entities/post.entity';
-// import { CreatePostDto } from './dto/create-post.dto';
-// import { UpdatePostDto } from './dto/update-post.dto';
-// import { log } from 'console';
-
-// @Injectable()
-// export class PostsService {
-//   constructor(
-//     @InjectRepository(Post)
-//     private readonly postRepo: Repository<Post>,
-//   ) {}
-
-// // posts.service.ts
-// async findAll(params: { page: number; limit: number; sortBy: string; order: 'ASC' | 'DESC' }) {
-//   const { page, limit, sortBy, order } = params;
-
-//   const [posts, total] = await this.postRepo.findAndCount({
-//     relations: ['author', 'comments', 'likes'],
-//     order: { [sortBy]: order },
-//     skip: (page - 1) * limit,
-//     take: limit,
-//   });
-// log("the lof",posts,
-//     total,
-//     page);
-
-//   return {
-//     posts,
-//     total,
-//     page,
-//     pages: Math.ceil(total / limit),
-//   };
-// }
-
-//   async findOne(id: number) {
-//     const post = await this.postRepo.findOne({
-//       where: { id },
-//       relations: ['author', 'comments', 'likes'],
-//     });
-//     if (!post) throw new NotFoundException(`Post #${id} not found`);
-//     return post;
-//   }
-
-//   async findByUser(userId: number) {
-//     return this.postRepo.find({
-//       where: { author: { id: userId } },
-//       relations: ['author', 'comments', 'likes'],
-//       order: { createdAt: 'DESC' },
-//     });
-//   }
-
-//   async create(dto: CreatePostDto, userId: number) {
-//     const post = this.postRepo.create({ ...dto, author: { id: userId } as any });
-//     return this.postRepo.save(post);
-//   }
-
-//   async update(id: number, dto: UpdatePostDto) {
-//     const post = await this.findOne(id);
-//     Object.assign(post, dto);
-//     return this.postRepo.save(post);
-//   }
-
-//   async delete(id: number) {
-//     const result = await this.postRepo.delete(id);
-//     if (result.affected === 0) throw new NotFoundException(`Post #${id} not found`);
-//     return true;
-//   }
-// }
-///////////////////////////////////////////////////
-// import { Injectable, NotFoundException } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-// import { Post } from './entities/post.entity';
-// import { CreatePostDto } from './dto/create-post.dto';
-// import { UpdatePostDto } from './dto/update-post.dto';
-
-// @Injectable()
-// export class PostsService {
-//   constructor(
-//     @InjectRepository(Post)
-//     private readonly postRepo: Repository<Post>,
-//   ) {}
-
-//  // posts.service.ts
-// async findAll({
-//   page = 1,
-//   limit = 10,
-//   sortBy = 'createdAt',
-//   order = 'desc',
-// }: {
-//   page?: number;
-//   limit?: number;
-//   sortBy?: 'createdAt' | 'likes';
-//   order?: 'asc' | 'desc';
-// }) {
-//   const skip = (page - 1) * limit;
-
-//   const [posts, total] = await this.postRepo.findAndCount({
-//     relations: ['author', 'comments', 'likes'],
-//     order: { [sortBy]: order.toUpperCase() as 'ASC' | 'DESC' },
-//     take: limit,
-//     skip,
-//   });
-
-//   return {
-//     data: posts,
-//     meta: {
-//       total,
-//       page,
-//       limit,
-//       totalPages: Math.ceil(total / limit),
-//     },
-//   };
-// }
-
-//   async findOne(id: number) {
-//     const post = await this.postRepo.findOne({
-//       where: { id },
-//       relations: ['author', 'comments', 'likes'],
-//     });
-//     if (!post) throw new NotFoundException(`Post #${id} not found`);
-//     return post;
-//   }
-
-//   async create(dto: CreatePostDto, userId: number) {
-//     const post = this.postRepo.create({
-//       ...dto,
-//       author: { id: userId } as any,
-//     });
-//     return this.postRepo.save(post);
-//   }
-
-//   async update(id: number, dto: UpdatePostDto) {
-//     await this.postRepo.update(id, dto);
-//     return this.findOne(id);
-//   }
-
-//   async delete(id: number) {
-//     await this.postRepo.delete(id);
-//   }
-// }

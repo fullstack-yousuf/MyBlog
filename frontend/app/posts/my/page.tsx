@@ -42,12 +42,13 @@ const page: React.FC = () => {
     },
     [deletePost]
   );
-
+ 
   // 🔹 Update Post
   const handleUpdate = useCallback(
     async (payload: { title: string; content: string }) => {
       if (!editingPostId) return;
       try {
+        console.log("payload in update: ", payload);
         await updatePost.mutateAsync({ id: editingPostId, ...payload });
         setEditingPostId(null);
         notify("✅ Post updated", "success");
