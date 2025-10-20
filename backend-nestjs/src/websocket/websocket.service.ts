@@ -43,8 +43,5 @@ getOnlineUsers() {
       client.emit('online_users_list', onlineUsers);
     });
   }
-  // broadcast(event: string, data: any) {
-    
-  //   this.clients.forEach((client) => client.emit(event, data));
-  // }
+ 
 }

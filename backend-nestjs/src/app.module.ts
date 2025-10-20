@@ -11,9 +11,6 @@ import { WebsocketModule } from './websocket/websocket.module';
 
 @Module({
   imports: [
-    // ConfigModule.forRoot({
-    //   isGlobal: true, // allows use in all modules without re-importing
-    // })
     AuthModule,
     AppConfigModule,
     DatabaseModule,
@@ -21,7 +18,5 @@ import { WebsocketModule } from './websocket/websocket.module';
     PostsModule,
     ChatModule,
   ],
-  // controllers: [AppController],
-  // providers: [AppService],
 })
 export class AppModule {}

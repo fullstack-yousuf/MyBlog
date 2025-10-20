@@ -104,26 +104,3 @@ export class ChatController {
     return this.chatService.markAsRead(chatId, user.id);
   }
 }
-// export class ChatController {
-//   constructor(private readonly chatService: ChatService) {}
-
-//   @Post()
-//   createChat(@Req() req, @Body() dto: CreateChatDto) {
-//     return this.chatService.findOrCreatePrivateChat(req.user.id, dto);
-//   }
-
-//   @Get()
-//   listChats(@Req() req) {
-//     return this.chatService.getUserChats(req.user.id);
-//   }
-
-//   @Get(':chatId/messages')
-//   getMessages(@Req() req, @Param('chatId') chatId: number, @Query() query: PaginationDto) {
-//     return this.chatService.getMessages(chatId, req.user.id, query.limit, query.skip);
-//   }
-
-//   @Post(':chatId/read')
-//   markAsRead(@Req() req, @Param('chatId') chatId: number) {
-//     return this.chatService.markAsRead(chatId, req.user.id);
-//   }
-// }

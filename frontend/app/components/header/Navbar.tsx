@@ -14,18 +14,18 @@ console.log("unread",hasUnread);
   const [isOpen, setIsOpen] = useState(false);
 
   // Highlight active link
-  const linkClass = (path: string) =>
-    `relative block py-2 px-3 rounded-sm md:p-0 transition-colors duration-200 ${
-      pathname === path
-        ? "text-blue-700 bg-blue-100 md:bg-transparent dark:text-blue-400 font-semibold"
-        : "text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-gray-100 dark:hover:text-blue-400"
-    }`;
   // const linkClass = (path: string) =>
   //   `relative block py-2 px-3 rounded-sm md:p-0 transition-colors duration-200 ${
   //     pathname === path
   //       ? "text-blue-700 bg-blue-100 md:bg-transparent dark:text-blue-400 font-semibold"
   //       : "text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-gray-100 dark:hover:text-blue-400"
   //   }`;
+  const linkClass = (path: string) =>
+    `relative block py-2 px-3 rounded-sm md:p-0 transition-colors duration-200 ${
+      pathname === path
+        ? "text-blue-700 bg-blue-100 md:bg-transparent dark:text-blue-400 font-semibold"
+        : "text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-gray-100 dark:hover:text-blue-400"
+    }`;
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 shadow">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">

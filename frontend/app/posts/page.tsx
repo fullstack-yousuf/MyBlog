@@ -1,7 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useCreatePost, useLikePost, usePosts,usePostFilters } from "../hooks/usePosts";
+import {
+  useCreatePost,
+  useLikePost,
+  usePosts,
+  usePostFilters,
+} from "../hooks/usePosts";
 import { notify } from "../lib/notificationService";
 import ProtectedRoute from "../components/header/ProcetedRoute";
 import Modal from "../components/ui/Modal";
@@ -17,18 +22,18 @@ const PostsPage: React.FC = () => {
   useRealtimePosts(); // 👈 enables live updates
 
   // ✅ Clean filter logic
-  const { filters, applyFilters, clearFilters, DEFAULT_FILTERS } = usePostFilters();
+  const { filters, applyFilters, clearFilters, DEFAULT_FILTERS } =
+    usePostFilters();
 
   const { data, isLoading } = usePosts({ page, limit: 5, ...filters });
   const create = useCreatePost();
   const like = useLikePost();
   console.log("page log data", data);
-  
 
   const handleCreate = async (payload: { title: string; content: string }) => {
     try {
-      console.log("paylog: ",payload);
-      
+      console.log("paylog: ", payload);
+
       await create.mutateAsync(payload);
       notify("✅ Post created successfully", "success");
       setIsModalOpen(false);
@@ -84,52 +89,54 @@ const PostsPage: React.FC = () => {
           />
 
           {/* Posts */}
-      // wherever you're rendering posts
-<div className="mt-6 space-y-4">
-  {isLoading ? (
-    <p className="text-gray-500 text-center">Loading posts...</p>
-  ) : data?.data?.length ? (
-    data.data.map((p) => (
-      <PostCard
-        key={p.id}
-        post={p}
-        onLike={handleLike}
-        onOpen={(id) => router.push(`/posts/${id}`)}
-      />
-    ))
-  ) : (
-    <p className="text-gray-400 italic text-center">No posts yet.</p>
-  )}
-</div>
+          <div className="mt-6 space-y-4">
+            {isLoading ? (
+              <p className="text-gray-500 text-center">Loading posts...</p>
+            ) : data?.data?.length ? (
+              data.data.map((p) => (
+                <PostCard
+                  key={p.id}
+                  post={p}
+                  onLike={handleLike}
+                  onOpen={(id) => router.push(`/posts/${id}`)}
+                />
+              ))
+            ) : (
+              <p className="text-gray-400 italic text-center">No posts yet.</p>
+            )}
+          </div>
 
-{/* Pagination */}
-{data?.pagination && data.pagination.pages > 1 && (
-  <div className="flex justify-center items-center gap-3 mt-8">
-    <button
-      disabled={page <= 1}
-      onClick={() => setPage((p) => p - 1)}
-      className="px-4 py-2 border rounded-lg bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50"
-    >
-      Prev
-    </button>
-    <div className="px-4 py-2 text-blue-700 font-medium">
-      Page {data.pagination.page} / {data.pagination.pages}
-    </div>
-    <button
-      disabled={page >= data.pagination.pages}
-      onClick={() => setPage((p) => p + 1)}
-      className="px-4 py-2 border rounded-lg bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50"
-    >
-      Next
-    </button>
-  </div>
-)}
-
+          {/* Pagination */}
+          {data?.pagination && data.pagination.pages > 1 && (
+            <div className="flex justify-center items-center gap-3 mt-8">
+              <button
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+                className="px-4 py-2 border rounded-lg bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+              >
+                Prev
+              </button>
+              <div className="px-4 py-2 text-blue-700 font-medium">
+                Page {data.pagination.page} / {data.pagination.pages}
+              </div>
+              <button
+                disabled={page >= data.pagination.pages}
+                onClick={() => setPage((p) => p + 1)}
+                className="px-4 py-2 border rounded-lg bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Modal */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Create New Post">
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Create New Post"
+      >
         <PostForm onSubmit={handleCreate} />
       </Modal>
     </ProtectedRoute>
