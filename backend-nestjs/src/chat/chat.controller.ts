@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Param, Query, Req, UseGuards, ForbiddenException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Query,
+  Req,
+  UseGuards,
+  ForbiddenException,
+} from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { PaginationDto } from './dto/pagination.dto';
@@ -23,7 +33,7 @@ export class ChatController {
   async findOrCreateChat(@Req() req, @Body() dto: CreateChatDto) {
     const user = req.user as any;
     // console.log("user coning on serach in req",user);
-    
+
     return this.chatService.findOrCreatePrivateChat(user.id, dto);
   }
 
@@ -39,19 +49,19 @@ export class ChatController {
   // -------------------
   // Search users (exclude current user)
   // -------------------
-   @Get('search/users')
+  @Get('search/users')
   async searchUsers(@Req() req, @Query('q') q: string) {
     return this.chatService.searchUsers(req.user['id'], q);
   }
 
   // -------------------
-// Get chat by ID (with participants and last message)
-// -------------------
-@Get(':chatId')
-async getChatById(@Param('chatId') chatId: number, @Req() req) {
-  const user = req.user as any;
-  return this.chatService.getChatById(chatId, user.id);
-}
+  // Get chat by ID (with participants and last message)
+  // -------------------
+  @Get(':chatId')
+  async getChatById(@Param('chatId') chatId: number, @Req() req) {
+    const user = req.user as any;
+    return this.chatService.getChatById(chatId, user.id);
+  }
   // -------------------
   // Get messages in a chat
   // -------------------
@@ -78,6 +88,11 @@ async getChatById(@Param('chatId') chatId: number, @Req() req) {
     const user = req.user as any;
     if (!text?.trim()) throw new ForbiddenException('Message text required');
     return this.chatService.sendMessage(chatId, user.id, text);
+  }
+  @Get('unread/total')
+  async getTotalUnread(@Req() req) {
+    const user = req.user as any;
+    return this.chatService.getTotalUnread(user.id);
   }
 
   // -------------------

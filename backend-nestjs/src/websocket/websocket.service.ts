@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { ChatService } from 'src/chat/chat.service';
 
 @Injectable()
 export class WebsocketService {
@@ -20,6 +21,11 @@ getOnlineUsers() {
     if (client) {
       client.emit(event, data);
     }
+  }
+  //  Send global unread status 
+   async updateGlobalUnread(userId: number, chatService: ChatService) {
+    const hasUnread = await chatService.hasUnreadMessages(userId);
+    this.emitToUser(userId, "new_unread_global", { hasUnread });
   }
  // Broadcast to everyone except the sender
   broadcast(event: string, payload: any, excludeClient?: Socket) {

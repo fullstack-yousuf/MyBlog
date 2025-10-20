@@ -18,10 +18,10 @@ import { ChatService } from '../chat/chat.service';
   },
 })
 export class WebsocketGateway
-implements OnGatewayConnection, OnGatewayDisconnect
+  implements OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() server: Server;
-  
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly websocketService: WebsocketService,
@@ -34,7 +34,7 @@ implements OnGatewayConnection, OnGatewayDisconnect
   handleConnection(client: Socket): void {
     const authHeader = client.handshake.auth?.token;
     const token = authHeader?.startsWith('Bearer ')
-      ? authHeader. split(' ')[1]
+      ? authHeader.split(' ')[1]
       : authHeader;
 
     if (!token) {
@@ -50,10 +50,10 @@ implements OnGatewayConnection, OnGatewayDisconnect
 
       client.data.userId = payload.id;
       this.websocketService.addClient(payload.id, client);
-    this.websocketService.broadcast("user_online",payload.id,client);
-    
-    const onlineUsers = this.websocketService.getOnlineUsers();
-    this.websocketService.broadcast("online_users_list", onlineUsers);
+      this.websocketService.broadcast('user_online', payload.id, client);
+
+      const onlineUsers = this.websocketService.getOnlineUsers();
+      this.websocketService.broadcast('online_users_list', onlineUsers);
 
       console.log(`✅ User ${payload.id} connected via WebSocket`);
     } catch (error) {
@@ -61,19 +61,28 @@ implements OnGatewayConnection, OnGatewayDisconnect
       client.disconnect();
     }
   }
+  @SubscribeMessage('get_global_unread')
+  async handleGetGlobalUnread(
+    @MessageBody() userId: number,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const hasUnread = await this.chatService.hasUnreadMessages(userId);
+    client.emit('new_unread_global', { hasUnread });
+  }
 
   /**
    * Handle client disconnection
    */
   handleDisconnect(client: Socket): void {
     if (client.data?.userId) {
-
       this.websocketService.removeClient(client.data.userId);
-          this.websocketService.broadcast("user_offline", { id: client.data.userId });
-          
-    // 🔥 Broadcast updated online users list again
-    const onlineUsers = this.websocketService.getOnlineUsers();
-    this.websocketService.broadcast("online_users_list", onlineUsers);
+      this.websocketService.broadcast('user_offline', {
+        id: client.data.userId,
+      });
+
+      // 🔥 Broadcast updated online users list again
+      const onlineUsers = this.websocketService.getOnlineUsers();
+      this.websocketService.broadcast('online_users_list', onlineUsers);
 
       console.log(`🔌 User ${client.data.userId} disconnected`);
     } else {
@@ -82,14 +91,20 @@ implements OnGatewayConnection, OnGatewayDisconnect
   }
   // 🧠 Join chat room
   @SubscribeMessage('join_chat')
-  handleJoinChat(@ConnectedSocket() client: Socket, @MessageBody() chatId: string) {
+  handleJoinChat(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() chatId: string,
+  ) {
     client.join(`chat_${chatId}`);
     console.log(`👥 User ${client.data.userId} joined chat_${chatId}`);
   }
 
   // 🚪 Leave chat room
   @SubscribeMessage('leave_chat')
-  handleLeaveChat(@ConnectedSocket() client: Socket, @MessageBody() chatId: string) {
+  handleLeaveChat(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() chatId: string,
+  ) {
     client.leave(`chat_${chatId}`);
     console.log(`👋 User ${client.data.userId} left chat_${chatId}`);
   }
@@ -122,12 +137,18 @@ implements OnGatewayConnection, OnGatewayDisconnect
 
   // 🔔 Typing indicators
   @SubscribeMessage('typing')
-  handleTyping(@ConnectedSocket() client: Socket, @MessageBody() data: { chatId: string; userId: string }) {
+  handleTyping(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { chatId: string; userId: string },
+  ) {
     client.to(`chat_${data.chatId}`).emit('user_typing', data.userId);
   }
 
   @SubscribeMessage('stop_typing')
-  handleStopTyping(@ConnectedSocket() client: Socket, @MessageBody() data: { chatId: string; userId: string }) {
+  handleStopTyping(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { chatId: string; userId: string },
+  ) {
     client.to(`chat_${data.chatId}`).emit('user_stop_typing', data.userId);
   }
 }

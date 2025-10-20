@@ -9,6 +9,7 @@ import { ToastContainer } from "react-toastify";
 // import 'react-toastify/dist/ReactToastify.css';
 import { ReactQueryProvider } from "./lib/queryClient";
 import { OnlineUsersProvider } from "./context/OnlineUserContex";
+import { UnreadProvider } from "./context/UnreadContex";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,19 +37,18 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-        <ReactQueryProvider>
-
-          <SocketProvider>
-            <OnlineUsersProvider>
-            <Navbar />
-            <PostNotification />
-
-            <ToastContainer newestOnTop/>
-
-            {children}
-            </OnlineUsersProvider>
-          </SocketProvider>
-        </ReactQueryProvider>
+          <ReactQueryProvider>
+            <SocketProvider>
+              <UnreadProvider>
+                <OnlineUsersProvider>
+                  <Navbar />
+                  <PostNotification />
+                  <ToastContainer newestOnTop />
+                  {children}
+                </OnlineUsersProvider>
+              </UnreadProvider>
+            </SocketProvider>
+          </ReactQueryProvider>
         </AuthProvider>
       </body>
     </html>

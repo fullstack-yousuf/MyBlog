@@ -3,25 +3,37 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
+import { useUnread } from "../../context/UnreadContex";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { hasUnread } = useUnread();
+console.log("unread",hasUnread);
+
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   // Highlight active link
   const linkClass = (path: string) =>
-    `block py-2 px-3 rounded-sm md:p-0 transition-colors duration-200 ${
+    `relative block py-2 px-3 rounded-sm md:p-0 transition-colors duration-200 ${
       pathname === path
         ? "text-blue-700 bg-blue-100 md:bg-transparent dark:text-blue-400 font-semibold"
         : "text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-gray-100 dark:hover:text-blue-400"
     }`;
-
+  // const linkClass = (path: string) =>
+  //   `relative block py-2 px-3 rounded-sm md:p-0 transition-colors duration-200 ${
+  //     pathname === path
+  //       ? "text-blue-700 bg-blue-100 md:bg-transparent dark:text-blue-400 font-semibold"
+  //       : "text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-gray-100 dark:hover:text-blue-400"
+  //   }`;
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 shadow">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         {/* Logo */}
-        <Link href={user ? "/posts" : "/"} className="flex items-center space-x-3">
+        <Link
+          href={user ? "/posts" : "/"}
+          className="flex items-center space-x-3"
+        >
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
             MyBlog
           </span>
@@ -57,10 +69,11 @@ const Navbar = () => {
           className={`${isOpen ? "block" : "hidden"} w-full md:block md:w-auto`}
           id="navbar-default"
         >
-          <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg 
+          <ul
+            className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg 
                          bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-transparent 
-                         dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700">
-
+                         dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700"
+          >
             {/* Show only when NOT logged in */}
             {!user && (
               <>
@@ -88,6 +101,9 @@ const Navbar = () => {
                 <li>
                   <Link href="/chat" className={linkClass("/chat")}>
                     Chat
+                  {hasUnread && (
+        <span className="absolute top-1 -right-1 w-3 h-3 bg-green-500 rounded-full shadow-md animate-ping" />
+                  )}
                   </Link>
                 </li>
                 <li>
