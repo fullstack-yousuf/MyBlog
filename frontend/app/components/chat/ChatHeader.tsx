@@ -1,22 +1,24 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import { getSocket } from "../../lib/socket";
+import { useOnlineUsers } from "@/app/context/OnlineUserContex";
 
 interface ChatHeaderProps {
   name: string;
-  isOnline: boolean;
+          otherUser: string;
   chatId: string;
   currentUserId: string;
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({
   name,
-  isOnline,
+        otherUser,
   chatId,
   currentUserId,
 }) => {
   const [isTyping, setIsTyping] = useState(false);
   const socket = getSocket();
+  const {onlineUsers} =useOnlineUsers();
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -48,6 +50,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       socket.off("stop_typing", handleStopTyping);
     };
   }, [socket, chatId, currentUserId]);
+  // console.log("the chat id in header",chatId);
+
+  const isOnline = onlineUsers.includes(otherUser);
   console.log(isOnline);
 
   return (

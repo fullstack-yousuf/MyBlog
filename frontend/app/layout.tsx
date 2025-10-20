@@ -8,6 +8,7 @@ import { SocketProvider } from "./providers/SocketProviders";
 import { ToastContainer } from "react-toastify";
 // import 'react-toastify/dist/ReactToastify.css';
 import { ReactQueryProvider } from "./lib/queryClient";
+import { OnlineUsersProvider } from "./context/OnlineUserContex";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,11 +39,14 @@ export default function RootLayout({
         <ReactQueryProvider>
 
           <SocketProvider>
+            <OnlineUsersProvider>
             <Navbar />
             <PostNotification />
+
             <ToastContainer newestOnTop/>
 
             {children}
+            </OnlineUsersProvider>
           </SocketProvider>
         </ReactQueryProvider>
         </AuthProvider>

@@ -10,7 +10,7 @@ import { api } from "../../lib/api";
 type Message = {
   id: string;
   text: string;
-  senderId: string;
+  sender: { id: string };
   createdAt: string;
 };
 
@@ -36,7 +36,7 @@ export default function ChatWindow({ chatId }: ChatWindowProps) {
 
   const socket = getSocket();
   if (!socket) return;
-  console.log("user login window", user);
+  // console.log("user login window", user);
 
   useEffect(() => {
     if (!chatId || !user) return;
@@ -44,19 +44,19 @@ export default function ChatWindow({ chatId }: ChatWindowProps) {
     const fetchData = async () => {
       try {
         const res = await api.get(`/chat/${chatId}/messages`);
-        console.log("the window  res", res);
+        // console.log("the window  res", res);
 
         setMessages((res.data as any).messages ?? res.data);
 
         const chatRes = await api.get<Chat>(`/chat/${chatId}`);
-        console.log("the window  chatres", chatRes);
-        console.log("the window  user", user);
-        console.log("the window  chat id", chatId);
+        // console.log("the window  chatres", chatRes);
+        // console.log("the window  user", user);
+        // console.log("the window  chat id", chatId);
 
         const otherUser = chatRes.data.participants.find(
           (p: any) => p.id !== user.id
         );
-        console.log("the window  otherid", otherUser);
+        // console.log("the window  otherid", otherUser);
 
         setChatName(otherUser?.name || "Unknown");
         setOtherUserId(otherUser?.id || null);
@@ -67,85 +67,97 @@ export default function ChatWindow({ chatId }: ChatWindowProps) {
 
     fetchData();
   }, [chatId, user]);
+  // console.log("set message",messages);
+  console.log("other user",otherUserId);
 
-  const handleNewMessage = useCallback(
-    ({ chatId: incomingChatId, message }: any) => {
+  // const handleNewMessage = useCallback(
+  //   ({ chatId: incomingChatId, message }: any) => {
+  //     if (incomingChatId === chatId) {
+  //       setMessages((prev) => [...prev, message]);
+  //     }
+  //   },
+  //   [chatId]
+  // );
+
+  // useEffect(() => {
+  //   if (!chatId) return;
+
+  //   socket.emit("join_chat", chatId);
+  //   socket.on("new_message", handleNewMessage);
+
+  //   return () => {
+  //     socket.emit("leave_chat", chatId);
+  //     socket.off("new_message", handleNewMessage);
+  //   };
+  // }, [chatId, socket, handleNewMessage]);
+
+  useEffect(() => {
+    if (!chatId || !socket) return;
+
+    socket.emit("join_chat", chatId);
+
+    // 🔥 Listen for new incoming messages
+    socket.on("new_message", ({ chatId: incomingChatId, message }) => {
       if (incomingChatId === chatId) {
         setMessages((prev) => [...prev, message]);
       }
-    },
-    [chatId]
-  );
+    });
 
-  useEffect(() => {
-    if (!chatId) return;
+    // Optional: typing indicators
+    socket.on("user_typing", (userId) => {
+      console.log(`✍️ User ${userId} is typing...`);
+    });
 
-    socket.emit("join_chat", chatId);
-    socket.on("new_message", handleNewMessage);
-
-    return () => {
-      socket.emit("leave_chat", chatId);
-      socket.off("new_message", handleNewMessage);
-    };
-  }, [chatId, socket, handleNewMessage]);
-
-useEffect(() => {
-  if (!chatId || !socket) return;
-
-  socket.emit("join_chat", chatId);
-
-  // 🔥 Listen for new incoming messages
-  socket.on("new_message", ({ chatId: incomingChatId, message }) => {
-    if (incomingChatId === chatId) {
-      setMessages((prev) => [...prev, message]);
-    }
-  });
-
-  // Optional: typing indicators
-  socket.on("user_typing", (userId) => {
-    console.log(`✍️ User ${userId} is typing...`);
-  });
-
-  socket.on("user_stop_typing", (userId) => {
-    console.log(`🛑 User ${userId} stopped typing`);
-  });
-
-  return () => {
-    socket.emit("leave_chat", chatId);
-    socket.off("new_message");
-    socket.off("user_typing");
-    socket.off("user_stop_typing");
-  };
-}, [chatId, socket]);
-
-
-  useEffect(() => {
-    console.log("socket and other user id : ", socket, "id is", otherUserId);
-
-    if (!socket || !otherUserId) return;
-
-    const handleUserOnline = (id: string) => {
-      console.log("this is a id online", id);
-
-      if (id === otherUserId) setIsOnline(true);
-    };
-    const handleUserOffline = (id: string) => {
-      console.log("this is a id offline", id);
-      if (id === otherUserId) setIsOnline(false);
-    };
-
-    socket.on("user_online", handleUserOnline);
-    socket.on("user_offline", handleUserOffline);
-
-    socket.emit("check_online", otherUserId, (online: boolean) => {
-      setIsOnline(online);
+    socket.on("user_stop_typing", (userId) => {
+      console.log(`🛑 User ${userId} stopped typing`);
     });
 
     return () => {
-      socket.off("user_online", handleUserOnline);
-      socket.off("user_offline", handleUserOffline);
+      socket.emit("leave_chat", chatId);
+      socket.off("new_message");
+      socket.off("user_typing");
+      socket.off("user_stop_typing");
     };
-  }, [socket, otherUserId]);
+  }, [chatId, socket]);
+  // useEffect(() => {
+  //   if (!socket || !otherUserId) return;
+  //   console.log("the other id", otherUserId);
+
+  //   const handleUserOnline = (id: number | string) => {
+  //     console.log("the coming id", id);
+
+  //     if (id === otherUserId) {
+  //       console.log("🟢 User came online:", id);
+  //       setIsOnline(true);
+  //     }
+  //   };
+
+  //   const handleUserOffline = (id: number | string) => {
+  //     if (id === otherUserId) {
+  //       console.log("🔴 User went offline:", id);
+  //       setIsOnline(false);
+  //     }
+  //   };
+
+  //   const handleOnlineUsersList = (onlineUsers: (string | number)[]) => {
+  //     console.log("✅ Current online users:", onlineUsers);
+  //     setIsOnline(onlineUsers.includes(otherUserId));
+  //   };
+
+  //   // 🔌 Listen to all 3 real-time events
+  //   socket.on("user_online", handleUserOnline);
+  //   socket.on("user_offline", handleUserOffline);
+  //   socket.on("online_users_list", handleOnlineUsersList);
+
+  //   // 🔄 Request current list from server
+  //   socket.emit("get_online_users");
+
+  //   return () => {
+  //     socket.off("user_online", handleUserOnline);
+  //     socket.off("user_offline", handleUserOffline);
+  //     socket.off("online_users_list", handleOnlineUsersList);
+  //   };
+  // }, [socket, otherUserId]);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -153,6 +165,7 @@ useEffect(() => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+  // console.log("loging the message", messages);
 
   if (!chatId) {
     return (
@@ -169,7 +182,7 @@ useEffect(() => {
         chatId={chatId}
         currentUserId={user?.id || ""}
         name={chatName}
-        isOnline={isOnline}
+        otherUser={otherUserId||""}
       />
 
       {/* Messages area */}
@@ -178,7 +191,7 @@ useEffect(() => {
           <MessageBubble
             key={msg.id}
             text={msg.text}
-            sender={msg.senderId === user?.id ? "me" : "other"}
+            sender={msg.sender?.id === user?.id ? "me" : "other"}
           />
         ))}
         {/* Auto-scroll anchor */}

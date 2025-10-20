@@ -50,6 +50,10 @@ implements OnGatewayConnection, OnGatewayDisconnect
 
       client.data.userId = payload.id;
       this.websocketService.addClient(payload.id, client);
+    this.websocketService.broadcast("user_online",payload.id,client);
+    
+    const onlineUsers = this.websocketService.getOnlineUsers();
+    this.websocketService.broadcast("online_users_list", onlineUsers);
 
       console.log(`✅ User ${payload.id} connected via WebSocket`);
     } catch (error) {
@@ -63,7 +67,14 @@ implements OnGatewayConnection, OnGatewayDisconnect
    */
   handleDisconnect(client: Socket): void {
     if (client.data?.userId) {
+
       this.websocketService.removeClient(client.data.userId);
+          this.websocketService.broadcast("user_offline", { id: client.data.userId });
+          
+    // 🔥 Broadcast updated online users list again
+    const onlineUsers = this.websocketService.getOnlineUsers();
+    this.websocketService.broadcast("online_users_list", onlineUsers);
+
       console.log(`🔌 User ${client.data.userId} disconnected`);
     } else {
       console.log('🔌 Unknown client disconnected');

@@ -106,6 +106,8 @@ export class ChatService {
 
     // Notify the other user
     this.websocketService.emitToUser(participantId, 'chat:new', { chatId: chat.id });
+    // this.websocketService.broadcast("user_online",{id:userId});
+
 
     // Return chat with participants loaded
     return await this.chatRepo.findOne({
@@ -261,7 +263,7 @@ async getParticipants(chatId: number) {
 
     const message = this.messageRepo.create({
       chat: { id: chatId } as Chat,
-      sender: { id: userId } as User,
+      sender: { id: userId },
       text,
     });
 
