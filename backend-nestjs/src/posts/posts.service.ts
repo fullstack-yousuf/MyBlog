@@ -26,43 +26,9 @@ export class PostsService {
     @Inject(forwardRef(() => WebsocketService))
     private readonly websocketService: WebsocketService, // ✅ Inject the socket service
   ) {}
-  // async findAll(query: PostQueryDto, currentUserId: number) {
-  //   const { page = 1, limit = 5, sortBy = 'createdAt', order = 'DESC' } = query;
-
-  //   const [posts, total] = await this.postRepo.findAndCount({
-  //     relations: ['author', 'comments', 'likes', 'likes.user'], // ✅ include user in likes
-  //     order: { [sortBy]: order },
-  //     take: limit,
-  //     skip: (page - 1) * limit,
-  //   });
-
-  //   return {
-  //     posts: posts.map((p) => ({
-  //       id: p.id,
-  //       title: p.title,
-  //       content: p.content,
-  //       author: {
-  //         id: p.author?.id,
-  //         name: p.author?.name,
-  //         email: p.author?.email,
-  //       },
-  //       likeCount: p.likes?.length ?? 0,
-  //       commentCount: p.comments?.length ?? 0,
-  //       likedByUser:
-  //         p.likes?.some((like) => like.user?.id === currentUserId) ?? false, // ✅ safe
-  //       createdAt: p.createdAt,
-  //       updatedAt: p.updatedAt,
-  //     })),
-  //     total,
-  //     page,
-  //     pages: Math.ceil(total / limit),
-  //   };
-  // }
-
-  // async findAll(query: PostQueryDto,currentUserId:number) {
-  //   const { page, limit, sortBy, order } = query;
+ 
  async findAll(query: PostQueryDto, currentUserId: number) {
-    const { page = 1, limit = 5, sortBy = 'createdAt', order = 'DESC' } = query;
+    const { page = 1, limit = 10, sortBy = 'createdAt', order = 'DESC' } = query;
 
     const qb = this.postRepo
       .createQueryBuilder('post')
@@ -130,28 +96,7 @@ export class PostsService {
 
 
 
-  //   const [posts, total] = await this.postRepo.findAndCount({
-  //     relations: ['author', 'comments', 'likes'],
-  //     order: { [sortBy]: order },
-  //     take: limit,
-  //     skip: (page - 1) * limit,
-  //   });
-  //   // console.log("backend the data: ",posts,total,page);
-
-  //   return {
-  //     posts: posts.map((p) => ({
-  //       ...p,
-  //       // likeCount: p.likes?.length ?? 0,
-  //       // commentCount: p.comments?.length ?? 0,
-  //       likeCount: p.likes?.length ?? 0,
-  //       commentCount: p.comments?.length ?? 0,
-  //       likedByUser: p.likes?.some((like) => like.user.id === currentUserId),
-  //     })),
-  //     total,
-  //     page,
-  //     pages: Math.ceil(total / limit),
-  //   };
-  // }
+  
 
   async findOne(id: string,currentUserId:number) {
     const post = await this.postRepo.findOne({

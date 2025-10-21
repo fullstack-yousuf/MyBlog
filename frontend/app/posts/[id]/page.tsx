@@ -2,7 +2,7 @@
 
 "use client";
 
-import React from "react";
+import React, { useCallback } from "react";
 import { usePost, useComment, useLikePost } from "../../hooks/usePosts";
 import CommentList from "../../components/blog/CommentList";
 import { notify } from "../../lib/notificationService";
@@ -19,14 +19,28 @@ const page = ({ params }: { params: Promise<{ id: string }> }) => {
   const like = useLikePost();
 console.log("asdfwerwe",post);
 
-  const handleAddComment = async (text: string) => {
-    try {
-      await comment.mutateAsync({ id, text });
-      // notify("✅ Comment added", "success");
-    } catch {
-      notify("❌ Failed to add comment", "error");
-    }
-  };
+const handleAddComment = useCallback(
+    async (text: string) => {
+      try {
+        await comment.mutateAsync({ postId: id, text });
+        notify("✅ Comment added", "success");
+        // setShowComments(true);
+      } catch {
+        notify("❌ Failed to add comment", "error");
+      }
+    },
+    [comment, id]
+  );
+ 
+// const handleAddComment = async (postId:string,text: string) => {
+//     try {
+//       await comment.mutateAsync({ postId, text });
+//       // notify("✅ Comment added", "success");
+//     } catch {
+//       notify("❌ Failed to add comment", "error");
+//     }
+//   };
+   
 
   const handleLike = async () => {
     try {

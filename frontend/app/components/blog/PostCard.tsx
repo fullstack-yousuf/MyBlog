@@ -31,7 +31,7 @@ console.log("post loging ",post);
   const handleAddComment = useCallback(
     async (text: string) => {
       try {
-        await commentMutation.mutateAsync({ id: post.id, text });
+        await commentMutation.mutateAsync({ postId: post.id, text });
         notify("✅ Comment added", "success");
         setShowComments(true);
       } catch {

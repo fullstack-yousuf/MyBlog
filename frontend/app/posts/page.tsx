@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   useCreatePost,
@@ -13,6 +13,7 @@ import Modal from "../components/ui/Modal";
 import PostCard from "../components/blog/PostCard";
 import PostForm from "../components/blog/PostForm";
 import { FilterBar } from "../components/ui/FilterBar";
+import { useInfinitePosts } from "../hooks/useInfinitePosts";
 import { useRealtimePosts } from "../hooks/useRealtimePosts";
 
 const PostsPage: React.FC = () => {
@@ -25,10 +26,33 @@ const PostsPage: React.FC = () => {
   const { filters, applyFilters, clearFilters, DEFAULT_FILTERS } =
     usePostFilters();
 
-  const { data, isLoading } = usePosts({ page, limit: 5, ...filters });
+  // const { data, isLoading } = usePosts({ page, limit: 10, ...filters });
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfinitePosts({ limit: 10, ...filters });
+
   const create = useCreatePost();
   const like = useLikePost();
   console.log("page log data", data);
+
+  const loaderRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first.isIntersecting && hasNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 1 }
+    );
+
+    const current = loaderRef.current;
+    if (current) observer.observe(current);
+    return () => {
+      if (current) observer.unobserve(current);
+    };
+  }, [hasNextPage, fetchNextPage]);
 
   const handleCreate = async (payload: { title: string; content: string }) => {
     try {
@@ -51,6 +75,12 @@ const PostsPage: React.FC = () => {
       notify("❌ Like failed", "error");
     }
   };
+
+  const allPosts = data?.pages
+    ?.flatMap((page) => page.data)
+    ?.filter(
+      (post, index, self) => index === self.findIndex((p) => p.id === post.id)
+    );
 
   return (
     <ProtectedRoute>
@@ -87,8 +117,37 @@ const PostsPage: React.FC = () => {
               setPage(1);
             }}
           />
+          <div className="mt-6 space-y-4">
+            {isLoading ? (
+              <p className="text-gray-500 text-center">Loading posts...</p>
+            ) : data?.pages?.length ? (
+              allPosts?.map((p) => (
+                <PostCard
+                  key={p.id}
+                  post={p}
+                  onLike={handleLike}
+                  onOpen={(id) => router.push(`/posts/${id}`)}
+                />
+              ))
+            ) : (
+              <p className="text-gray-400 italic text-center">No posts yet.</p>
+            )}
+          </div>
 
-          {/* Posts */}
+          {/* Infinite scroll loader */}
+          <div
+            ref={loaderRef}
+            className="h-12 flex items-center justify-center"
+          >
+            {isFetchingNextPage && (
+              <p className="text-gray-500 text-sm">Loading more...</p>
+            )}
+            {!hasNextPage && !isLoading && (
+              <p className="text-gray-400 text-sm">No more posts</p>
+            )}
+          </div>
+
+          {/* Posts
           <div className="mt-6 space-y-4">
             {isLoading ? (
               <p className="text-gray-500 text-center">Loading posts...</p>
@@ -104,10 +163,10 @@ const PostsPage: React.FC = () => {
             ) : (
               <p className="text-gray-400 italic text-center">No posts yet.</p>
             )}
-          </div>
+          </div> */}
 
           {/* Pagination */}
-          {data?.pagination && data.pagination.pages > 1 && (
+          {/* {data?.pagination && data.pagination.pages > 1 && (
             <div className="flex justify-center items-center gap-3 mt-8">
               <button
                 disabled={page <= 1}
@@ -127,7 +186,7 @@ const PostsPage: React.FC = () => {
                 Next
               </button>
             </div>
-          )}
+          )} */}
         </div>
       </div>
 
