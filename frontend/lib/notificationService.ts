@@ -5,7 +5,7 @@ type NotificationType = "info" | "success" | "error" | "warning" | "default";
 
 export const notify = (
   message: string,
-  type: NotificationType = "info",
+  type: NotificationType = "default",
   options?: ToastOptions
 ) => {
   toast(message, {

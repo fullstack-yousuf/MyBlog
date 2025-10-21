@@ -1,4 +1,3 @@
-
 export interface Author {
   id: string;
   name: string;
@@ -18,7 +17,7 @@ export interface Post {
   author: Author;
   likeCount: number;
   commentCount: number;
-  comments:{
+  comments: {
     id: string; // ✅ Add this
     author: { id: string; name: string };
     text: string;

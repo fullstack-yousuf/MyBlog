@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/header/Navbar"; // adjust path
-import { AuthProvider } from "./context/AuthContext";
-import PostNotification from "./components/notification/PostNotification";
-import { SocketProvider } from "./providers/SocketProviders";
+import Navbar from "../components/header/Navbar"; // adjust path
+import { AuthProvider } from "../context/AuthContext";
+import PostNotification from "../components/notification/PostNotification";
+import { SocketProvider } from "../providers/SocketProviders";
 import { ToastContainer } from "react-toastify";
 // import 'react-toastify/dist/ReactToastify.css';
-import { ReactQueryProvider } from "./lib/queryClient";
-import { OnlineUsersProvider } from "./context/OnlineUserContex";
-import { UnreadProvider } from "./context/UnreadContex";
+import { ReactQueryProvider } from "../lib/queryClient";
+import { OnlineUsersProvider } from "../context/OnlineUserContex";
+import { UnreadProvider } from "../context/UnreadContex";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

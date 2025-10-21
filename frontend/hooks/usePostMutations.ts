@@ -1,88 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
-import { Post, PostListResponse } from "../components/blog/types";
-
-// --------------------
-// 🔹 TYPES
-// --------------------
-export type SortField = "createdAt" | "likes";
-export type SortOrder = "ASC" | "DESC";
-
-export interface PostsParams {
-  page?: number;
-  limit?: number;
-  sortBy?: SortField;
-  order?: SortOrder;
-}
-
-interface CommentPayload {
-  postId: string;
-  text: string;
-}
-
-interface CommentResponse {
-  postId: string;
-  comment: {
-    id: string;
-    text: string;
-    author: { id: string; name: string };
-    createdAt: string;
-  };
-  commentCount?: number;
-}
-
-// --------------------
-// 🔹 QUERY KEYS
-// --------------------
-const queryKeys = {
-  all: ["posts"] as const,
-  infinite: ["posts-infinite"] as const,
-  single: (id: string) => ["post", id] as const,
-  mine: ["myPosts"] as const,
-};
-
-// --------------------
-// 🔹 API HELPERS
-// --------------------
-const fetchPosts = async (params: PostsParams): Promise<PostListResponse> => {
-  const res = await api.get<PostListResponse>("/posts", { params });
-  return res.data;
-};
-
-const fetchPost = async (id: string): Promise<Post> => {
-  const res = await api.get<Post>(`/posts/${id}`);
-  return res.data;
-};
-
-// --------------------
-// 🔹 QUERIES
-// --------------------
-export const usePosts = (params: PostsParams = {}) => {
-  const { page = 1, limit = 10, sortBy = "createdAt", order = "DESC" } = params;
-
-  return useQuery<PostListResponse>({
-    queryKey: [...queryKeys.all, page, limit, sortBy, order],
-    queryFn: () => fetchPosts({ page, limit, sortBy, order }),
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
-    placeholderData: (prev) => prev,
-  });
-};
-
-export const usePost = (id: string) =>
-  useQuery<Post>({
-    enabled: !!id,
-    queryKey: queryKeys.single(id),
-    queryFn: () => fetchPost(id),
-  });
-
-export const useMyPosts = () =>
-  useQuery<Post[]>({
-    queryKey: queryKeys.mine,
-    queryFn: async () => (await api.get<Post[]>("/posts/my")).data,
-  });
-
+import { queryKeys } from "./queryKeys";
+import { CommentPayload, CommentResponse } from "./type";
 // --------------------
 // 🔹 MUTATION HELPERS
 // --------------------
@@ -92,7 +11,6 @@ const rollbackQueries = (qc: any, ctx: any, id?: string) => {
   );
   if (ctx?.prevSingle && id) qc.setQueryData(queryKeys.single(id), ctx.prevSingle);
 };
-
 // --------------------
 // 🔹 CREATE / UPDATE / DELETE POST
 // --------------------
@@ -315,33 +233,3 @@ export const useComment = () => {
     },
   });
 };
-
-// --------------------
-// 🔹 FILTER HOOK
-// --------------------
-export interface FilterState {
-  sortBy: SortField;
-  order: SortOrder;
-}
-
-const DEFAULT_FILTERS: FilterState = {
-  sortBy: "createdAt",
-  order: "DESC",
-};
-
-export function usePostFilters(initial?: Partial<FilterState>) {
-  const [filters, setFilters] = useState<FilterState>({
-    ...DEFAULT_FILTERS,
-    ...initial,
-  });
-
-  const applyFilters = useCallback(
-    (newFilters: Partial<FilterState>) =>
-      setFilters((prev) => ({ ...prev, ...newFilters })),
-    []
-  );
-
-  const clearFilters = useCallback(() => setFilters(DEFAULT_FILTERS), []);
-
-  return { filters, applyFilters, clearFilters, DEFAULT_FILTERS };
-}

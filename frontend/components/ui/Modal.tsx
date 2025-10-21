@@ -39,15 +39,14 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
           >
             <Dialog.Panel className="relative w-full max-w-lg rounded-2xl bg-white shadow-lg p-6">
               {/* Close Button */}
-           <button
-  type="button"
-  onClick={onClose}
-  className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded-md p-2 focus:outline-none"
->
-  <span className="sr-only">Close</span>
-  <span className="text-lg">×</span>
-</button>
-
+              <button
+                type="button"
+                onClick={onClose}
+                className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded-md p-2 focus:outline-none"
+              >
+                <span className="sr-only">Close</span>
+                <span className="text-lg">×</span>
+              </button>
 
               {/* Title */}
               {title && (

@@ -1,12 +1,12 @@
 "use client";
 import { useEffect } from "react";
-import { getSocket } from "@/app/lib/socket";
-import { notify } from "@/app/lib/notificationService";
+import { getSocket } from "../../lib/socket";
+import { notify } from "../../lib/notificationService";
 
 const PostNotification = () => {
   useEffect(() => {
     const socket = getSocket();
-if(!socket) return;
+    if (!socket) return;
     // Generic notification
     const handleNotification = (msg: string) => {
       notify(msg, "info");
@@ -19,15 +19,17 @@ if(!socket) return;
 
     const handlePostLiked = (data: any) => {
       console.log("coming data for like", data);
-      
+
       notify(` ${data?.user?.name || "Someone"} liked a post`, "default");
     };
 
     const handlePostCommented = (data: any) => {
       console.log("coming data for commnet", data);
 
-notify(`💬 ${data?.user?.name || "Someone"} commented: ${data?.
-comment}`, "warning");
+      notify(
+        `💬 ${data?.user?.name || "Someone"} commented: ${data?.comment}`,
+        "warning"
+      );
     };
 
     socket.on("newNotification", handleNotification);

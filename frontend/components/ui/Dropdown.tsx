@@ -26,15 +26,19 @@ export const Dropdown = ({
   return (
     <div className="">
       {label && (
-
-      <label className="mb-1 text-sm font-medium text-gray-600">{label}</label>
+        <label className="mb-1 text-sm font-medium text-gray-600">
+          {label}
+        </label>
       )}
       <Listbox value={selected} onChange={onChange}>
         <div className={`relative ${widthClass}`}>
           <Listbox.Button className="relative cursor-default rounded-lg border border-gray-300 bg-white py-1.5 pl-3 pr-10 text-left text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 sm:text-sm">
             <span className="block truncate">{selected.name}</span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              <ChevronUpDownIcon
+                className="h-5 w-5 text-gray-400"
+                aria-hidden="true"
+              />
             </span>
           </Listbox.Button>
 
@@ -56,7 +60,11 @@ export const Dropdown = ({
                 >
                   {({ selected, active }) => (
                     <>
-                      <span className={`${selected ? "font-semibold" : "font-normal"} block truncate`}>
+                      <span
+                        className={`${
+                          selected ? "font-semibold" : "font-normal"
+                        } block truncate`}
+                      >
                         {option.name}
                       </span>
                       {selected && (

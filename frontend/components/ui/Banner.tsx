@@ -14,7 +14,7 @@ const Banner: React.FC<BannerProps> = ({
   title,
   subtitle,
   description,
-  imageSrc="",
+  imageSrc = "",
 }) => {
   return (
     <div className="relative w-full h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg mb-5">
@@ -29,7 +29,9 @@ const Banner: React.FC<BannerProps> = ({
 
       {/* Overlay Text */}
       <div className="absolute inset-0 flex flex-col justify-end px-6 mb-4 md:px-10 text-white">
-        <h1 className="text-3xl md:text-4xl font-bold drop-shadow-lg">{title}</h1>
+        <h1 className="text-3xl md:text-4xl font-bold drop-shadow-lg">
+          {title}
+        </h1>
         {subtitle && (
           <p className="text-lg font-medium mt-1 opacity-90">{subtitle}</p>
         )}

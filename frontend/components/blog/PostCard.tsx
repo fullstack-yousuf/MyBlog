@@ -2,13 +2,13 @@
 import React, { useState, useCallback, memo } from "react";
 import { Post } from "./types";
 import CommentList from "./CommentList";
-import { notify } from "@/app/lib/notificationService";
-import { useComment } from "../../hooks/usePosts";
+import { notify } from "../../lib/notificationService";
 import {
   ChatBubbleBottomCenterTextIcon,
   EllipsisHorizontalCircleIcon,
   HandThumbUpIcon,
 } from "@heroicons/react/24/outline";
+import { useComment } from "../../hooks/usePostMutations";
 
 export interface PostCardProps {
   post: Post;
@@ -26,7 +26,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const [expanded, setExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const commentMutation = useComment();
-console.log("post loging ",post);
+  console.log("post loging ", post);
 
   const handleAddComment = useCallback(
     async (text: string) => {
@@ -61,8 +61,7 @@ console.log("post loging ",post);
   const likeCount = post.likeCount ?? 0;
 
   // ✅ Comment count works for BOTH feed and my blogs
-  const commentCount =
-    post.commentCount ;
+  const commentCount = post.commentCount;
 
   return (
     <article className="bg-white shadow rounded-xl border border-gray-200 p-4 sm:p-6 transition hover:shadow-md">

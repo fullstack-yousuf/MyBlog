@@ -1,6 +1,6 @@
 import React from "react";
-import ChatLayout from "../components/chat/ChatLayout";
-import ProtectedRoute from "../components/header/ProcetedRoute";
+import ChatLayout from "../../components/chat/ChatLayout";
+import ProtectedRoute from "../../components/header/ProcetedRoute";
 
 const page = () => {
   return (

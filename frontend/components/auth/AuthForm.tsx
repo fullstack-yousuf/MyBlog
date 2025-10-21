@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { api } from "@/app/lib/api";
+import { api } from "../../lib/api";
 
 interface Field {
   name: string;

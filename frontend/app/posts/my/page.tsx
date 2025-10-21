@@ -2,21 +2,17 @@
 
 import React, { useState, useCallback, memo } from "react";
 import { useRouter } from "next/navigation";
-import ProtectedRoute from "@/app/components/header/ProcetedRoute";
-import {
-  useMyPosts,
-  useDeletePost,
-  useUpdatePost,
-  useCreatePost,
-  useLikePost,
-} from "../../hooks/usePosts";
-import PostCard from "../../components/blog/PostCard";
-import PostForm from "../../components/blog/PostForm";
-import { notify } from "../../lib/notificationService";
-import type { Post } from "../../components/blog/types";
+import ProtectedRoute from "../../../components/header/ProcetedRoute";
+
+import PostCard from "../../../components/blog/PostCard";
+import PostForm from "../../../components/blog/PostForm";
+import { notify } from "../../../lib/notificationService";
+import type { Post } from "../../../components/blog/types";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
-import Banner from "@/app/components/ui/Banner";
-import { useAuth } from "@/app/context/AuthContext";
+import Banner from "../../../components/ui/Banner";
+import { useAuth } from "../../../context/AuthContext";
+import { useMyPosts } from "../../../hooks/usePostQuries";
+import { useDeletePost, useLikePost, useUpdatePost } from "../../../hooks/usePostMutations";
 
 const page: React.FC = () => {
 

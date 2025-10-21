@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import { getSocket } from "../../lib/socket";
-import { useOnlineUsers } from "@/app/context/OnlineUserContex";
+import { useOnlineUsers } from "../../context/OnlineUserContex";
 
 interface ChatHeaderProps {
   name: string;

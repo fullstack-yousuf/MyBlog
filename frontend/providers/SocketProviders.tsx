@@ -1,6 +1,6 @@
 "use client";
 import { ReactNode, useEffect } from "react";
-import { getSocket } from "@/app/lib/socket";
+import { getSocket } from "../lib/socket";
 
 
 export const SocketProvider = ({ children }: { children: ReactNode }) => {
@@ -14,7 +14,7 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
       console.log("✅ Socket connected:", socket.id); 
     });
 
-    socket.on("disconnect", (reason) => {
+    socket.on("disconnect", (reason: any) => {
       console.log("❌ Socket disconnected:", reason);
     });
 

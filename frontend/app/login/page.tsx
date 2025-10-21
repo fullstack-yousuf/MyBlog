@@ -2,8 +2,8 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
-import AuthForm from "../components/auth/AuthForm";
-import { useAuth } from "../context/AuthContext";
+import AuthForm from "../../components/auth/AuthForm";
+import { useAuth } from "../../context/AuthContext";
 
 interface LoginForm {
   email: string;

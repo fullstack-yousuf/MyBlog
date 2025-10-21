@@ -1,20 +1,17 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  useCreatePost,
-  useLikePost,
-  usePosts,
-  usePostFilters,
-} from "../hooks/usePosts";
-import { notify } from "../lib/notificationService";
-import ProtectedRoute from "../components/header/ProcetedRoute";
-import Modal from "../components/ui/Modal";
-import PostCard from "../components/blog/PostCard";
-import PostForm from "../components/blog/PostForm";
-import { FilterBar } from "../components/ui/FilterBar";
-import { useInfinitePosts } from "../hooks/useInfinitePosts";
-import { useRealtimePosts } from "../hooks/useRealtimePosts";
+
+import { notify } from "../../lib/notificationService";
+import ProtectedRoute from "../../components/header/ProcetedRoute";
+import Modal from "../../components/ui/Modal";
+import PostCard from "../../components/blog/PostCard";
+import PostForm from "../../components/blog/PostForm";
+import { FilterBar } from "../../components/ui/FilterBar";
+import { useInfinitePosts } from "../../hooks/useInfinitePosts";
+import { useRealtimePosts } from "../../hooks/useRealtimePosts";
+import { usePostFilters } from "../../hooks/usePostFilters";
+import { useCreatePost, useLikePost } from "../../hooks/usePostMutations";
 
 const PostsPage: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -25,8 +22,7 @@ const PostsPage: React.FC = () => {
   // ✅ Clean filter logic
   const { filters, applyFilters, clearFilters, DEFAULT_FILTERS } =
     usePostFilters();
-
-  // const { data, isLoading } = usePosts({ page, limit: 10, ...filters });
+    
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfinitePosts({ limit: 10, ...filters });
 

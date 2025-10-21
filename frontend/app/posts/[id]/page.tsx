@@ -3,12 +3,13 @@
 "use client";
 
 import React, { useCallback } from "react";
-import { usePost, useComment, useLikePost } from "../../hooks/usePosts";
-import CommentList from "../../components/blog/CommentList";
-import { notify } from "../../lib/notificationService";
-import ProtectedRoute from "@/app/components/header/ProcetedRoute";
+import CommentList from "../../../components/blog/CommentList";
+import { notify } from "../../../lib/notificationService";
+import ProtectedRoute from "../../../components/header/ProcetedRoute";
 import { HandThumbUpIcon } from "@heroicons/react/24/outline";
-import Banner from "@/app/components/ui/Banner";
+import Banner from "../../../components/ui/Banner";
+import { usePost } from "../../../hooks/usePostQuries";
+import { useComment, useLikePost } from "../../../hooks/usePostMutations";
 
 
 const page = ({ params }: { params: Promise<{ id: string }> }) => {
@@ -32,15 +33,7 @@ const handleAddComment = useCallback(
     [comment, id]
   );
  
-// const handleAddComment = async (postId:string,text: string) => {
-//     try {
-//       await comment.mutateAsync({ postId, text });
-//       // notify("✅ Comment added", "success");
-//     } catch {
-//       notify("❌ Failed to add comment", "error");
-//     }
-//   };
-   
+
 
   const handleLike = async () => {
     try {

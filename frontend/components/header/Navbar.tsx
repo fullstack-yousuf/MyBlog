@@ -8,7 +8,7 @@ import { useUnread } from "../../context/UnreadContex";
 const Navbar = () => {
   const { user, logout } = useAuth();
   const { hasUnread } = useUnread();
-console.log("unread",hasUnread);
+  console.log("unread", hasUnread);
 
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -101,9 +101,9 @@ console.log("unread",hasUnread);
                 <li>
                   <Link href="/chat" className={linkClass("/chat")}>
                     Chat
-                  {hasUnread && (
-        <span className="absolute top-1 -right-1 w-3 h-3 bg-green-500 rounded-full shadow-md animate-ping" />
-                  )}
+                    {hasUnread && (
+                      <span className="absolute top-1 -right-1 w-3 h-3 bg-green-500 rounded-full shadow-md animate-ping" />
+                    )}
                   </Link>
                 </li>
                 <li>
