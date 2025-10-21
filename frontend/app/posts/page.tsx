@@ -22,7 +22,7 @@ const PostsPage: React.FC = () => {
   // ✅ Clean filter logic
   const { filters, applyFilters, clearFilters, DEFAULT_FILTERS } =
     usePostFilters();
-    
+
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfinitePosts({ limit: 10, ...filters });
 
@@ -117,9 +117,10 @@ const PostsPage: React.FC = () => {
             {isLoading ? (
               <p className="text-gray-500 text-center">Loading posts...</p>
             ) : data?.pages?.length ? (
-              allPosts?.map((p) => (
+              allPosts?.map((p,index) => (
                 <PostCard
-                  key={p.id}
+                  key={p.id??`post-${index}`}
+                  // key={p.id}
                   post={p}
                   onLike={handleLike}
                   onOpen={(id) => router.push(`/posts/${id}`)}
