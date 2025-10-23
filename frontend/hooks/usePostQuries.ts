@@ -2,16 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import { Post, PostListResponse } from "../components/blog/types";
 import { queryKeys } from "./queryKeys";
-// import { PostsParams } from "./type";
 
 
 // --------------------
 // 🔹 API HELPERS
 // --------------------
-// const fetchPosts = async (params: PostsParams): Promise<PostListResponse> => {
-//   const res = await api.get<PostListResponse>("/posts", { params });
-//   return res.data;
-// };
 
 const fetchPost = async (id: string): Promise<Post> => {
   const res = await api.get<Post>(`/posts/${id}`);

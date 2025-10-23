@@ -3,7 +3,7 @@ import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { getSocket } from "../lib/socket";
 import { Comment, Post } from "@/components/blog/types";
 
-// --- 💬 Hook ---
+// ---  Hook ---
 export const useRealtimePosts = () => {
   const qc = useQueryClient();
 
@@ -11,7 +11,7 @@ export const useRealtimePosts = () => {
     const socket = getSocket();
     if (typeof window === "undefined" || !socket?.connected) return;
 
-    // 🧰 Helper: update all infinite queries
+    //  Helper: update all infinite queries
     // const updateInfinitePosts = (updateFn: (post: Post) => Post) => {
     //   qc.getQueryCache()
     //     .getAll()
@@ -53,7 +53,7 @@ export const useRealtimePosts = () => {
         });
     };
 
-    // --- 🔥 Like event ---
+    // ---  Like event ---
     const handleLikeUpdated = (data: {
       postId: string;
       likeCount: number;
@@ -72,7 +72,7 @@ export const useRealtimePosts = () => {
       );
     };
 
-    // --- 💬 Comment event ---
+    // ---  Comment event ---
     const handleCommentAdded = (data: { postId: string; comment: Comment }) => {
       updateInfinitePosts((post) =>
         post.id === data.postId
@@ -95,7 +95,7 @@ export const useRealtimePosts = () => {
       });
     };
 
-    // --- 🆕 Post created event ---
+    // ---  Post created event ---
     const handlePostCreated = (newPost: Post) => {
       qc.setQueriesData(
         { queryKey: ["posts-infinite"] },
@@ -116,12 +116,12 @@ export const useRealtimePosts = () => {
       );
     };
 
-    // --- 🔗 Listen for socket events ---
+    // ---  Listen for socket events ---
     socket.on("post:likeUpdated", handleLikeUpdated);
     socket.on("post:commentAdded", handleCommentAdded);
     socket.on("post:created", handlePostCreated);
 
-    // --- 🧹 Cleanup ---
+    // ---  Cleanup ---
     return () => {
       socket.off("post:likeUpdated", handleLikeUpdated);
       socket.off("post:commentAdded", handleCommentAdded);
@@ -129,116 +129,3 @@ export const useRealtimePosts = () => {
     };
   }, [qc]);
 };
-// export const useRealtimePosts = () => {
-//   const qc = useQueryClient();
-
-//   useEffect(() => {
-//     const socket = getSocket();
-//     if (!socket) return;
-
-//     const updateInfinitePosts = (updateFn: (post: any) => any) => {
-//       qc.getQueryCache()
-//         .getAll()
-//         .forEach(({ queryKey }) => {
-//           // Only update post lists
-//           if (queryKey[0] === "posts-infinite") {
-//             qc.setQueryData(queryKey, (old: any) => {
-//               if (!old?.pages) return old;
-
-//               return {
-//                 ...old,
-//                 pages: old.pages.map((page: any) => ({
-//                   ...page,
-//                   data: page.data.map((post: any) =>
-//                     updateFn(post)
-//                   ),
-//                 })),
-//               };
-//             });
-//           }
-//         });
-//     };
-
-//     // 🔥 Like event
-//     const handleLikeUpdated = (data: any) => {
-//       updateInfinitePosts((post) =>
-//         post.id === data.postId
-//           ? {
-//               ...post,
-//               likeCount: data.likeCount,
-//               likedByUser: data.liked,
-//             }
-//           : post
-//       );
-
-//       // Also update single post query if open
-//       qc.setQueryData(["posts", data.postId], (old: any) =>
-//         old
-//           ? {
-//               ...old,
-//               likeCount: data.likeCount,
-//               likedByUser: data.liked,
-//             }
-//           : old
-//       );
-//     };
-
-//     // 💬 Comment event
-//     const handleCommentAdded = (data: any) => {
-//       updateInfinitePosts((post) =>
-//         post.id === data.postId
-//           ? {
-//               ...post,
-//               commentCount: (post.commentCount ?? 0) + 1,
-//             }
-//           : post
-//       );
-
-//       qc.setQueryData(["post", data.postId], (old: any) =>
-//         old
-//           ? {
-//               ...old,
-//               commentCount: (old.commentCount ?? 0) + 1,
-//               comments: old.comments?.some((c: any) => c.id === data.comment.id)
-//                 ? old.comments
-//                 : [...(old.comments ?? []), data.comment],
-//             }
-//           : old
-//       );
-//     };
-//      // 🆕 ✅ Post created event
-//     const handlePostCreated = (newPost: any) => {
-//       qc.setQueriesData({ queryKey: ["posts-infinite"] }, (old: any) => {
-//         if (!old?.pages) return old;
-
-//         return {
-//           ...old,
-//           pages: [
-//             {
-//               ...old.pages[0],
-//               data: [newPost, ...old.pages[0].data],
-//             },
-//             ...old.pages.slice(1),
-//           ],
-//         };
-//       });
-
-//       // also update "my posts" if applicable
-//       qc.setQueryData(["myPosts"], (old: any) =>
-//         Array.isArray(old) ? [newPost, ...old] : old
-//       );
-//     };
-
-//     // 🔗 Listen for real-time events
-//     socket.on("post:likeUpdated", handleLikeUpdated);
-//     socket.on("post:commentAdded", handleCommentAdded);
-//     socket.on("post:created", handlePostCreated);
-
-//     // 🧹 Cleanup
-//     return () => {
-//       socket.off("post:likeUpdated", handleLikeUpdated);
-//       socket.off("post:commentAdded", handleCommentAdded);
-//       socket.off("post:created", handlePostCreated);
-//     };
-//   }, [qc]);
-// };

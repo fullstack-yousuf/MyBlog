@@ -211,44 +211,7 @@ export class PostsService {
   // -----------------------------------
   // 🔹 LIKE TOGGLE
   // -----------------------------------
-  //   async toggleLike(postId: string, user: User) {
-  //     const post = await this.postRepo.findOne({
-  //       where: { id: postId },
-  //       relations: ['likes', 'likes.user'],
-  //     });
-  //     if (!post) throw new NotFoundException('Post not found');
 
-  //     const existing = await this.likeRepo.findOne({
-  //       where: { post: { id: postId }, user: { id: user.id } },
-  //     });
-
-  //     let liked = false;
-
-  //     if (existing) {
-  //       await this.likeRepo.remove(existing);
-  //     } else {
-  //       const like = this.likeRepo.create({ post, user });
-  //       await this.likeRepo.save(like);
-  //       liked = true;
-  //     }
-
-  //     // const likeCount = liked
-  //     //   ? (post.likes?.length ?? 0) + 1
-  //     //   : (post.likes?.length ?? 0) - 1;
-
-  //     // 🔥 Broadcast like update
-  //   const likeCount = await this.likeRepo.count({ where: { post: { id: postId } } });
-  // this.websocketService.broadcast('post:likeUpdated', { postId, liked, likeCount });
-
-  //     // this.websocketService.broadcast('post:likeUpdated', {
-  //     //   postId,
-  //     //   userId: user.id,
-  //     //   liked,
-  //     //   likeCount,
-  //     // });
-
-  //     return { liked, likeCount };
-  //   }
   async toggleLike(postId: string, user: User) {
     const post = await this.postRepo.findOne({
       where: { id: postId },

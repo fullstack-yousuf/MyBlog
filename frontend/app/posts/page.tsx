@@ -86,12 +86,6 @@ const PostsPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
             <h1 className="text-3xl font-bold text-gray-900">Feed</h1>
             <div className="flex gap-2">
-              {/* <button
-                onClick={() => setPage(1)}
-                className="px-4 py-2 border rounded-lg bg-white text-gray-700 hover:bg-gray-100"
-              >
-                Refresh
-              </button> */}
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
@@ -117,9 +111,9 @@ const PostsPage: React.FC = () => {
             {isLoading ? (
               <p className="text-gray-500 text-center">Loading posts...</p>
             ) : data?.pages?.length ? (
-              allPosts?.map((p,index) => (
+              allPosts?.map((p, index) => (
                 <PostCard
-                  key={p.id??`post-${index}`}
+                  key={p.id ?? `post-${index}`}
                   // key={p.id}
                   post={p}
                   onLike={handleLike}
@@ -143,47 +137,6 @@ const PostsPage: React.FC = () => {
               <p className="text-gray-400 text-sm">No more posts</p>
             )}
           </div>
-
-          {/* Posts
-          <div className="mt-6 space-y-4">
-            {isLoading ? (
-              <p className="text-gray-500 text-center">Loading posts...</p>
-            ) : data?.data?.length ? (
-              data.data.map((p) => (
-                <PostCard
-                  key={p.id}
-                  post={p}
-                  onLike={handleLike}
-                  onOpen={(id) => router.push(`/posts/${id}`)}
-                />
-              ))
-            ) : (
-              <p className="text-gray-400 italic text-center">No posts yet.</p>
-            )}
-          </div> */}
-
-          {/* Pagination */}
-          {/* {data?.pagination && data.pagination.pages > 1 && (
-            <div className="flex justify-center items-center gap-3 mt-8">
-              <button
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="px-4 py-2 border rounded-lg bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50"
-              >
-                Prev
-              </button>
-              <div className="px-4 py-2 text-blue-700 font-medium">
-                Page {data.pagination.page} / {data.pagination.pages}
-              </div>
-              <button
-                disabled={page >= data.pagination.pages}
-                onClick={() => setPage((p) => p + 1)}
-                className="px-4 py-2 border rounded-lg bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50"
-              >
-                Next
-              </button>
-            </div>
-          )} */}
         </div>
       </div>
 
