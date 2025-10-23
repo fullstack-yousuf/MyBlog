@@ -134,6 +134,24 @@ export class WebsocketGateway
       client.emit('error_message', { error: err.message });
     }
   }
+// chat.gateway.ts
+@SubscribeMessage('chat:message')
+async handleChatMessage(
+  @ConnectedSocket() client: Socket,
+  @MessageBody() data: { chatId: number; text: string; senderId: number }
+) {
+  console.log('📩 Received message:', data);
+
+  // ✅ 1. Save to DB
+  const savedMessage = await this.chatService.sendMessage(
+    data.chatId,
+    data.senderId,
+    data.text,
+  );
+
+  // ✅ 2. Broadcast to all users in chat
+  this.server.to(`chat_${data.chatId}`).emit('chat:message', savedMessage);
+}
 
   // 🔔 Typing indicators
   @SubscribeMessage('typing')

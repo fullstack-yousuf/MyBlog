@@ -174,6 +174,13 @@ export class ChatService {
       skip,
     });
   }
+// async createMessage(chatId: string, senderId: string, text: string) {
+//   const chat = await this.chatRepo.findOne({ where: { id: chatId } });
+//   const sender = await this.userRepo.findOne({ where: { id: senderId } });
+
+//   const message = this.messageRepo.create({ chat, sender, text });
+//   return this.messageRepo.save(message);
+// }
 
   /**
    * Send a message in a chat

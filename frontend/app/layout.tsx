@@ -7,7 +7,7 @@ import PostNotification from "../components/notification/PostNotification";
 import { SocketProvider } from "../providers/SocketProviders";
 import { ToastContainer } from "react-toastify";
 // import 'react-toastify/dist/ReactToastify.css';
-import { ReactQueryProvider } from "../lib/queryClient";
+import { ReactQueryProvider } from "../lib/QueryClientProvider";
 import { OnlineUsersProvider } from "../context/OnlineUserContex";
 import { UnreadProvider } from "../context/UnreadContex";
 
@@ -33,6 +33,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+       <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#2563eb" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
