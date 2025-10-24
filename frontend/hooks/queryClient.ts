@@ -14,6 +14,8 @@ export const queryClient = new QueryClient({
       staleTime: 1000 * 60, // 1 minute
       refetchOnWindowFocus: true,
       refetchOnReconnect: true,
+            networkMode: "offlineFirst", // 👈 THIS IS IMPORTANT
+
     },
   },
 });

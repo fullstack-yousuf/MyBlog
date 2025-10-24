@@ -2,7 +2,7 @@
 import React, { useState, useEffect, FormEvent } from "react";
 import { getSocket } from "@/lib/socket";
 import { queryClient } from "@/hooks/queryClient";
-import { enqueueMessage, flushQueuedMessages } from "@/lib/messageQueue";
+// import { enqueueMessage, flushQueuedMessages } from "@/lib/messageQueue";
 
 interface MessageInputProps {
   chatId: string;
@@ -28,21 +28,21 @@ const MessageInput: React.FC<MessageInputProps> = ({ chatId, userId }) => {
     return () => clearTimeout(typingTimeout);
   }, [text, chatId, userId, socket]);
 
-  // 🟢 Auto-flush queued messages when online again
-  useEffect(() => {
-    const handleReconnect = async () => {
-      console.log("🔄 Connection restored, flushing queued messages...");
-      await flushQueuedMessages(socket);
-    };
+  // // 🟢 Auto-flush queued messages when online again
+  // useEffect(() => {
+  //   const handleReconnect = async () => {
+  //     console.log("🔄 Connection restored, flushing queued messages...");
+  //     await flushQueuedMessages(socket);
+  //   };
 
-    window.addEventListener("online", handleReconnect);
-    if (socket) socket.on("connect", handleReconnect);
+  //   window.addEventListener("online", handleReconnect);
+  //   if (socket) socket.on("connect", handleReconnect);
 
-    return () => {
-      window.removeEventListener("online", handleReconnect);
-      if (socket) socket.off("connect", handleReconnect);
-    };
-  }, [socket]);
+  //   return () => {
+  //     window.removeEventListener("online", handleReconnect);
+  //     if (socket) socket.off("connect", handleReconnect);
+  //   };
+  // }, [socket]);
 
   // 🟢 Send Message
   const sendChatMessage = async (e: FormEvent) => {
@@ -66,14 +66,14 @@ const MessageInput: React.FC<MessageInputProps> = ({ chatId, userId }) => {
       };
     });
 
-    // Try sending via socket
+    // // Try sending via socket
     if (navigator.onLine && socket?.connected) {
           socket.emit("send_message", { chatId, text, senderId: userId });
 
       // socket.emit("chat:message", { chatId, text });
     } else {
       console.warn("📡 Offline - queued message for later send");
-      console.log("the enqueue message in the input ", await enqueueMessage(newMessage));
+      // console.log("the enqueue message in the input ", await enqueueMessage(newMessage));
       // await enqueueMessage(newMessage);
     }
 
@@ -92,6 +92,8 @@ const MessageInput: React.FC<MessageInputProps> = ({ chatId, userId }) => {
       />
       <button
         type="submit"
+          disabled={!navigator.onLine}
+
         className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
       >
         Send ➤

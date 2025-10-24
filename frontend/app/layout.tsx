@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import { ReactQueryProvider } from "../lib/QueryClientProvider";
 import { OnlineUsersProvider } from "../context/OnlineUserContex";
 import { UnreadProvider } from "../context/UnreadContex";
+import NetworkBanner from "@/components/ui/NetworkBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,6 +46,7 @@ export default function RootLayout({
             <SocketProvider>
               <UnreadProvider>
                 <OnlineUsersProvider>
+                  <NetworkBanner />
                   <Navbar />
                   <PostNotification />
                   <ToastContainer newestOnTop />

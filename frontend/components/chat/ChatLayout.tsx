@@ -49,8 +49,8 @@ console.log("the active chat0" ,activeChat);
         )}
 
         {/* Main Chat */}
-        <div className="flex-1 flex flex-col">
-          {/* Mobile top bar */}
+        <div className="flex-1 flex flex-col ">
+          {/* Mobile top bar
           <div className="md:hidden p-3 border-b bg-white flex items-center">
             <button
               className="px-3 py-1 bg-gray-200 rounded-lg"
@@ -59,7 +59,17 @@ console.log("the active chat0" ,activeChat);
               ☰
             </button>
             <h1 className="ml-3 font-semibold">Chat</h1>
-          </div>
+          </div> */}
+          <div className="md:hidden sticky top-0 z-30 p-3 border-b bg-white flex items-center shadow-sm">
+  <button
+    className="px-3 py-1 bg-gray-200 rounded-lg"
+    onClick={() => setSidebarOpen(true)}
+  >
+    ☰
+  </button>
+  <h1 className="ml-3 font-semibold">Chat</h1>
+</div>
+
 
           {/* Show chat window only if a chat is selected */}
           {activeChat ? (
