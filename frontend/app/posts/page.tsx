@@ -12,40 +12,11 @@ import { usePostFilters } from "../../hooks/usePostFilters";
 import { useCreatePost, useLikePost } from "../../hooks/usePostMutations";
 import { notify } from "../../lib/notificationService";
 
-// ✅ Offline banner component
-// const ConnectionBanner: React.FC = () => {
-  // const [online, setOnline] = useState<boolean>(navigator.onLine);
-
-  // useEffect(() => {
-  //   const handleOnline = () => setOnline(true);
-  //   const handleOffline = () => setOnline(false);
-  //   window.addEventListener("online", handleOnline);
-  //   window.addEventListener("offline", handleOffline);
-  //   return () => {
-  //     window.removeEventListener("online", handleOnline);
-  //     window.removeEventListener("offline", handleOffline);
-  //   };
-  // }, []);
-
-//   if (online) {
-//     return (
-//       <div className="fixed top-0 left-0 w-full bg-green-500 text-white text-center py-1 text-sm z-50 animate-fade-out">
-//         ✅ Connected
-//       </div>
-//     );
-//   } else {
-//     return (
-//       <div className="fixed top-0 left-0 w-full bg-yellow-600 text-white text-center py-1 text-sm z-50">
-//         ⚠️ You’re offline — showing cached posts
-//       </div>
-//     );
-//   }
-// };
-
 const PostsPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const loaderRef = useRef<HTMLDivElement | null>(null);
+// console.log("the load ref ",loaderRef);
 
   useRealtimePosts(); // 👈 realtime updates
   const { filters, applyFilters, clearFilters } = usePostFilters();

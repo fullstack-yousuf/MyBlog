@@ -37,7 +37,7 @@ export default function ChatSidebar({ onClose, onSelectChat, activeChat }: Props
     const fetchChats = async () => {
       try {
         const { data } = await api.get<Chat[]>("/chat");
-        console.log("the char data",data);
+        // console.log("the char data",data);
         
         setChats(
           data.map((c) => ({

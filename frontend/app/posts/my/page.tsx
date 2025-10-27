@@ -12,16 +12,19 @@ import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Banner from "../../../components/ui/Banner";
 import { useAuth } from "../../../context/AuthContext";
 import { useMyPosts } from "../../../hooks/usePostQuries";
-import { useDeletePost, useLikePost, useUpdatePost } from "../../../hooks/usePostMutations";
+import {
+  useDeletePost,
+  useLikePost,
+  useUpdatePost,
+} from "../../../hooks/usePostMutations";
 
 const page: React.FC = () => {
+  const userid = useAuth();
+  // console.log("the useris ",userid);
 
-  const userid =useAuth();
-  console.log("the useris ",userid);
-  
   const router = useRouter();
   const { data: posts = [], isLoading } = useMyPosts();
-  console.log("thi sis the ", posts);
+  // console.log("thi sis the ", posts);
 
   const deletePost = useDeletePost();
   const updatePost = useUpdatePost();
@@ -43,13 +46,13 @@ const page: React.FC = () => {
     },
     [deletePost]
   );
- 
+
   // 🔹 Update Post
   const handleUpdate = useCallback(
     async (payload: { title: string; content: string }) => {
       if (!editingPostId) return;
       try {
-        console.log("payload in update: ", payload);
+        // console.log("payload in update: ", payload);
         await updatePost.mutateAsync({ id: editingPostId, ...payload });
         setEditingPostId(null);
         notify("✅ Post updated", "success");
@@ -93,11 +96,11 @@ const page: React.FC = () => {
     <ProtectedRoute>
       <div className="p-6 max-w-4xl mx-auto">
         {/* Header */}
-         <Banner
-            title="My Blogs"
-            description=" Select a post below to edit or delete."
-            imageSrc="/img/bg1.jpg" // use your uploaded image in /public/
-          />
+        <Banner
+          title="My Blogs"
+          description=" Select a post below to edit or delete."
+          imageSrc="/img/bg1.jpg" // use your uploaded image in /public/
+        />
 
         {/* Edit Form */}
         {editingPostId ? (
@@ -118,7 +121,7 @@ const page: React.FC = () => {
             </button>
           </div>
         ) : (
-      <p className="italic text-gray-600">Select a post below...</p>
+          <p className="italic text-gray-600">Select a post below...</p>
         )}
 
         {/* Posts */}

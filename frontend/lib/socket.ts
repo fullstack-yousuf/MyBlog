@@ -12,9 +12,13 @@ export const getSocket = () => {
     if (!token) {
       console.log("❌ No token found");
     }
-    console.log("B ", socket);
+    // console.log("B ", socket);
 
-    socket = io("http://localhost:5000", {  
+    socket = io("http://localhost:5000", {
+      autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 2000,
       transports: ["websocket"],
       auth: {
         token, // ✅ send raw token only

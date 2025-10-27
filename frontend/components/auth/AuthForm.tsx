@@ -46,7 +46,7 @@ function AuthForm<T extends Record<string, any>>({
 
     try {
       const res = await api.post<ApiResponse>(endpoint, form);
-      console.log(res);
+      // console.log(res);
       setMessage(res.data.message || `${submitLabel} successful!`);
       // login(res.data.token);
       router.push("/login");

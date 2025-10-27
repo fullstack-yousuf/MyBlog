@@ -53,11 +53,11 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   // console.log("the chat id in header",chatId);
 
   const isOnline = onlineUsers.includes(otherUser);
-  console.log(isOnline);
+  // console.log(isOnline);
 
   return (
     // <div className="flex  items-center justify-between px-4 py-3 border-b border-gray-200 bg-blue-50">
-<div className="sticky top-0 z-20 bg-blue-50 border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+<div className="sticky top-0 bg-blue-50  border-b border-gray-200 px-4 py-3 flex items-center justify-between">
       <div className="flex items-center space-x-3">
         {/* Avatar */}
         <div className="w-10 h-10 rounded-full bg-blue-200 flex items-center justify-center font-semibold text-blue-800">

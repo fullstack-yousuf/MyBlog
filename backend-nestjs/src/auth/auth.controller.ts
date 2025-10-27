@@ -21,7 +21,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
   me(@Req() req) {
-    console.log("the req log for auth me ",req.user.id);
+    // console.log("the req log for auth me ",req.user.id);
     
     return this.auth.getProfile(req.user.id);
   }

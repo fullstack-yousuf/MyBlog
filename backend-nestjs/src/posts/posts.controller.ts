@@ -32,7 +32,7 @@ export class PostsController {
   @HttpPost()
   @UseGuards(AuthGuard('jwt'))
   create(@Body() dto: CreatePostDto, @Req() req) {
-    console.log("log the req in controller" ,req);
+    // console.log("log the req in controller" ,req);
     
     return this.postsService.create(dto, req.user);
   }
@@ -46,7 +46,7 @@ export class PostsController {
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
   delete(@Param('id') id: string, @Req() req) {
-    console.log("detele the id",id);
+    // console.log("detele the id",id);
     
     return this.postsService.delete(id, req.user);
   }

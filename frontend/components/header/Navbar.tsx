@@ -8,7 +8,7 @@ import { useUnread } from "../../context/UnreadContex";
 const Navbar = () => {
   const { user, logout } = useAuth();
   const { hasUnread } = useUnread();
-  console.log("unread", hasUnread);
+  // console.log("unread", hasUnread);
 
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);

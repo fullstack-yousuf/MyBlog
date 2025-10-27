@@ -44,9 +44,10 @@ export default function NetworkBanner() {
 
   return (
     <div
-      className={`fixed top-4 inset-x-4 max-w-sm mx-auto rounded-lg shadow-lg p-4 flex items-center justify-center space-x-3 bg-${
-        online ? "green" : "red"
-      }-600 text-white transition-opacity duration-500`}
+     className={`fixed top-4 inset-x-4 max-w-sm mx-auto rounded-lg shadow-lg p-4 flex items-center justify-center space-x-3 ${
+  online ? "bg-green-600" : "bg-red-600"
+} text-white transition-opacity duration-500`}
+
       style={{ opacity }}
     >
       <div className="flex-shrink-0">

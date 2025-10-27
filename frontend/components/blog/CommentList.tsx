@@ -11,7 +11,7 @@ const CommentList: React.FC<Props> = ({ comments = [], onAdd }) => {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [limit, setLimit] = useState(2);
-  console.log("asdf", comments);
+  // console.log("asdf", comments);
 
   const submit = async () => {
     if (!text.trim()) return;

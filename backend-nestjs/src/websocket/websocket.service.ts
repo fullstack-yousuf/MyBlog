@@ -30,11 +30,12 @@ getOnlineUsers() {
  // Broadcast to everyone except the sender
   broadcast(event: string, payload: any, excludeClient?: Socket) {
     this.clients.forEach((client) => {
-      if (client !== excludeClient) {
+      // if (client !== excludeClient) {
         client.emit(event, payload);
-      }
+      // }
     });
   }
+  
     // 🔥 New: broadcast full list to everyone
  
   broadcastOnlineUsers() {

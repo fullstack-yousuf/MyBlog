@@ -18,13 +18,13 @@ const PostNotification = () => {
     };
 
     const handlePostLiked = (data: any) => {
-      console.log("coming data for like", data);
+      // console.log("coming data for like", data);
 
       notify(` ${data?.user?.name || "Someone"} liked a post`, "default");
     };
 
     const handlePostCommented = (data: any) => {
-      console.log("coming data for commnet", data);
+      // console.log("coming data for commnet", data);
 
       notify(
         `💬 ${data?.user?.name || "Someone"} commented: ${data?.comment}`,

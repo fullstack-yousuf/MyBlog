@@ -52,12 +52,14 @@ export class PostsService {
 
     // ✅ Safe sorting logic
     if (sortBy === 'likes') {
-      qb.addSelect((subQuery) =>
-        subQuery
-          .select('COUNT(l.id)', 'likeCountOrder')
-          .from('like', 'l')
-          .where('l.postId = post.id'),
-      ).orderBy('likeCountOrder', order);
+      qb.addSelect(
+        (subQuery) =>
+          subQuery
+            .select('COUNT(l.id)')
+            .from('like', 'l')
+            .where('l.postId = post.id'),
+        'likeCountOrder',
+      ).orderBy('"likeCountOrder"', order); // quotes matter for SQLite
     } else {
       qb.orderBy(`post.${sortBy}`, order);
     }

@@ -15,7 +15,7 @@ export default function ChatLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeChat, setActiveChat] = useState<string>(""); // ✅ store chat object
 
-console.log("the active chat0" ,activeChat);
+  // console.log("the active chat0", activeChat);
 
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-4rem)] bg-gray-50 p-4">
@@ -28,7 +28,6 @@ console.log("the active chat0" ,activeChat);
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
         >
           {
-           
             <ChatSidebar
               onClose={() => setSidebarOpen(false)}
               onSelectChat={(chat) => {
@@ -50,8 +49,8 @@ console.log("the active chat0" ,activeChat);
 
         {/* Main Chat */}
         <div className="flex-1 flex flex-col ">
-          {/* Mobile top bar
-          <div className="md:hidden p-3 border-b bg-white flex items-center">
+      
+          <div className="md:hidden sticky top-0  p-3 bg-white flex items-center shadow-sm">
             <button
               className="px-3 py-1 bg-gray-200 rounded-lg"
               onClick={() => setSidebarOpen(true)}
@@ -59,17 +58,7 @@ console.log("the active chat0" ,activeChat);
               ☰
             </button>
             <h1 className="ml-3 font-semibold">Chat</h1>
-          </div> */}
-          <div className="md:hidden sticky top-0 z-30 p-3 border-b bg-white flex items-center shadow-sm">
-  <button
-    className="px-3 py-1 bg-gray-200 rounded-lg"
-    onClick={() => setSidebarOpen(true)}
-  >
-    ☰
-  </button>
-  <h1 className="ml-3 font-semibold">Chat</h1>
-</div>
-
+          </div>
 
           {/* Show chat window only if a chat is selected */}
           {activeChat ? (

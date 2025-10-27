@@ -9,27 +9,9 @@ export const useRealtimePosts = () => {
 
   useEffect(() => {
     const socket = getSocket();
-    if (typeof window === "undefined" || !socket?.connected) return;
-
-    //  Helper: update all infinite queries
-    // const updateInfinitePosts = (updateFn: (post: Post) => Post) => {
-    //   qc.getQueryCache()
-    //     .getAll()
-    //     .forEach(({ queryKey }) => {
-    //       if (queryKey[0] === "posts-infinite") {
-    //         qc.setQueryData(queryKey, (old: InfiniteData<{ data: Post[] }> | undefined) => {
-    //           if (!old?.pages) return old;
-    //           return {
-    //             ...old,
-    //             pages: old.pages.map((page) => ({
-    //               ...page,
-    //               data: page.data.map((post) => updateFn(post)),
-    //             })),
-    //           };
-    //         });
-    //       }
-    //     });
-    // };
+    // if (typeof window === "undefined" || !socket?.connected) return;
+if(!socket)return;
+   
     const updateInfinitePosts = (updateFn: (post: Post) => Post) => {
       qc.getQueryCache()
         .getAll()

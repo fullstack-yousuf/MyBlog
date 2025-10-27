@@ -10,12 +10,11 @@ import localforage from "localforage";
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // replaces cacheTime
-      staleTime: 1000 * 60, // 1 minute
       refetchOnWindowFocus: true,
       refetchOnReconnect: true,
-            networkMode: "offlineFirst", // 👈 THIS IS IMPORTANT
-
+      gcTime: 1000 * 60 * 60 * 24, // cacheTime
+      // staleTime: 1000 * 30, // 30 sec
+      networkMode: "offlineFirst", // 👈 THIS IS IMPORTANT
     },
   },
 });

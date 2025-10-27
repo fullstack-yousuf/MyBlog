@@ -26,7 +26,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const [expanded, setExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const commentMutation = useComment();
-  console.log("post loging ", post);
+  // console.log("post loging ", post);
 
   const handleAddComment = useCallback(
     async (text: string) => {

@@ -21,6 +21,7 @@ export const useCreatePost = () => {
       api.post("/posts", payload),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: queryKeys.all });
+      qc.invalidateQueries({ queryKey: queryKeys.infinite });
       qc.invalidateQueries({ queryKey: queryKeys.mine });
     },
   });
@@ -59,7 +60,7 @@ export const useLikePost = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       const res = await api.post<{liked:boolean}>(`/posts/${id}/like`);
-      console.log("this is a like opost",res);
+      // console.log("this is a like opost",res);
       
       return {
         postId: id,
@@ -137,6 +138,7 @@ export const useLikePost = () => {
 
     onSettled: () => {
       qc.invalidateQueries({ queryKey: queryKeys.mine });
+      qc.invalidateQueries({ queryKey: queryKeys.infinite });
     },
   });
 };
