@@ -14,11 +14,7 @@ const nextConfig: NextConfig = {
   experimental: {
     appDir: true,
   } as any,
-};
-
-export default withPWA({
-  ...nextConfig,
-  dest: "public",
+   dest: "public",
   register: true,
   skipWaiting: true,
   disable: isDev,
@@ -64,4 +60,6 @@ export default withPWA({
       },
     },
   ],
-});
+};
+
+export default withPWA(nextConfig);
