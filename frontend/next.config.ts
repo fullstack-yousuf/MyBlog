@@ -1,23 +1,8 @@
-const withPWA = require("next-pwa") as any;
-import type { NextConfig } from "next";
-
-const isDev = process.env.NODE_ENV === "development";
-
-const nextConfig: NextConfig = {
-  reactStrictMode: true,
-  eslint: {
-    ignoreDuringBuilds: true, // ✅ prevents ESLint errors from breaking builds
-  },
-  typescript: {
-    ignoreBuildErrors: true, // ✅ prevents TS errors from breaking builds
-  },
-  experimental: {
-    appDir: true,
-  } as any,
-   dest: "public",
+const withPWA = require("next-pwa")({
+  dest: "public",
   register: true,
   skipWaiting: true,
-  disable: isDev,
+  disable: process.env.NODE_ENV !== "production", // ✅ enable PWA only in production
   fallbacks: {
     document: "/offline.html",
   },
@@ -60,6 +45,21 @@ const nextConfig: NextConfig = {
       },
     },
   ],
+});
+
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  reactStrictMode: true,
+  eslint: {
+    ignoreDuringBuilds: true, // ✅ don’t fail builds due to ESLint
+  },
+  typescript: {
+    ignoreBuildErrors: true, // ✅ don’t fail builds due to TS
+  },
+  experimental: {
+    appDir: true,
+  } as any,
 };
 
 export default withPWA(nextConfig);
