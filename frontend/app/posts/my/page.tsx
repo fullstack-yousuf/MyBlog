@@ -18,7 +18,7 @@ import {
   useUpdatePost,
 } from "../../../hooks/usePostMutations";
 
-const page: React.FC = () => {
+const Page: React.FC = () => {
   const userid = useAuth();
   // console.log("the useris ",userid);
 
@@ -164,4 +164,4 @@ const page: React.FC = () => {
   );
 };
 
-export default memo(page);
+export default memo(Page);

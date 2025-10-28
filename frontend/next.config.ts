@@ -5,6 +5,7 @@ const isDev = process.env.NODE_ENV === "development";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  dest: "public",
   experimental: {
     appDir: true,
   } as any,
@@ -12,7 +13,6 @@ const nextConfig: NextConfig = {
 
 export default withPWA({
   ...nextConfig,
-  dest: "public",
   register: true,
   skipWaiting: true,
   disable: isDev,

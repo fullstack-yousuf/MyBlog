@@ -12,7 +12,7 @@ import { usePost } from "../../../hooks/usePostQuries";
 import { useComment, useLikePost } from "../../../hooks/usePostMutations";
 
 
-const page = ({ params }: { params: Promise<{ id: string }> }) => {
+const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } =React.use(params);
 
   const { data: post, isLoading } = usePost(id);
@@ -98,4 +98,4 @@ const handleAddComment = useCallback(
   );
 };
 
-export default page;
+export default Page;
