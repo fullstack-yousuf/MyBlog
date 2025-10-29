@@ -27,7 +27,7 @@ const LoginPage = () => {
         { name: "email", type: "email", placeholder: "Email" },
         { name: "password", type: "password", placeholder: "Password" },
       ]}
-      endpoint="http://myblogyousuf-backend.vercel.app/auth/login"
+      endpoint="https://myblogyousuf-backend.vercel.app/auth/login"
       submitLabel="Login"
       onSuccess={handleSuccess}
     />
