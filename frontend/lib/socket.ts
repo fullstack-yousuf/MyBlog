@@ -14,7 +14,7 @@ export const getSocket = () => {
     }
     // console.log("B ", socket);
 
-    socket = io("http://localhost:5000", {
+    socket = io("https://myblogyousuf-backend.vercel.app", {
       autoConnect: true,
       reconnection: true,
       reconnectionAttempts: Infinity,
