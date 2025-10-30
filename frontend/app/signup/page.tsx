@@ -6,18 +6,21 @@ interface SignupForm {
   name: string;
   email: string;
   password: string;
+  confirmpassword: string;
 }
 
 const initialSignupValues: SignupForm = {
   name: "",
   email: "",
   password: "",
+  confirmpassword: "",
 };
 
 const signupFields = [
   { name: "name", placeholder: "Name" },
   { name: "email", type: "email", placeholder: "Email" },
   { name: "password", type: "password", placeholder: "Password" },
+  { name: "confirmpassword", type: "password", placeholder: "Confirm Password" },
 ];
 
 const SignupPage = () => {

@@ -22,13 +22,17 @@ export class AuthService {
     const existing = await this.usersRepo.findOne({
       where: { email: dto.email },
     });
+
+    if (dto.password !== dto.confirmPassword) {
+      throw new ConflictException('Passwords do not match');
+    }
     if (existing) throw new ConflictException('User already exists');
 
     const hashed = await bcrypt.hash(dto.password, 10);
     const user = this.usersRepo.create({ ...dto, password: hashed });
     await this.usersRepo.save(user);
 
-    const token = this.signToken( user.id );
+    const token = this.signToken(user.id);
     return { token, user: { id: user.id, name: user.name, email: user.email } };
   }
 
@@ -37,9 +41,9 @@ export class AuthService {
     if (!user || !(await bcrypt.compare(dto.password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
     }
-// console.log("loging user",user);
+    // console.log("loging user",user);
 
-    const token = this.signToken( user.id );
+    const token = this.signToken(user.id);
     return { token, user: { id: user.id, name: user.name, email: user.email } };
   }
 
@@ -51,7 +55,6 @@ export class AuthService {
   }
 
   private signToken(id: number) {
-     
-    return this.jwtService.sign({ id }, { expiresIn: '1h' })  ;
+    return this.jwtService.sign({ id }, { expiresIn: '1h' });
   }
 }

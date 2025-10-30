@@ -45,6 +45,12 @@ function AuthForm<T extends Record<string, any>>({
     setMessage(`${submitLabel}...`);
 
     try {
+      if ("confirmpassword" in form && form.password !== form.confirmpassword) {
+        setIsError(true);
+        setMessage("Passwords do not match!");
+        return;
+      }
+
       const res = await api.post<ApiResponse>(endpoint, form);
       // console.log(res);
       setMessage(res.data.message || `${submitLabel} successful!`);
