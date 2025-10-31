@@ -1,9 +1,11 @@
 
+
+////////neon dbconnenction
 // src/database/database.module.ts
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+// DATABASE_URL='postgresql://neondb_owner:npg_Kaz8VbqZEj7f@ep-winter-math-a1v8rkqv.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -13,44 +15,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         url: config.get('DATABASE_URL'),
         autoLoadEntities: true,
         synchronize: false,
-
-        // Supabase requires SSL but without strict cert checks
-        ssl: { rejectUnauthorized: false },
+        ssl: {
+          rejectUnauthorized: false, // required for Neon
+        },
+        extra: {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        },
       }),
     }),
   ],
 })
 export class DatabaseModule {}
-
-////////neon dbconnenction
-// // src/database/database.module.ts
-// import { Module } from '@nestjs/common';
-// import { ConfigService } from '@nestjs/config';
-// import { TypeOrmModule } from '@nestjs/typeorm';
-// // DATABASE_URL='postgresql://neondb_owner:npg_Kaz8VbqZEj7f@ep-winter-math-a1v8rkqv.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
-// @Module({
-//   imports: [
-//     TypeOrmModule.forRootAsync({
-//       inject: [ConfigService],
-//       useFactory: (config: ConfigService) => ({
-//         type: 'postgres',
-//         url: config.get('DATABASE_URL'),
-//         autoLoadEntities: true,
-//         synchronize: false,
-//         ssl: {
-//           rejectUnauthorized: false, // required for Neon
-//         },
-//         extra: {
-//           ssl: {
-//             rejectUnauthorized: false,
-//           },
-//         },
-//       }),
-//     }),
-//   ],
-// })
-// export class DatabaseModule {}
-////////sqlite
+////////for sqlite local
 // import { Module } from '@nestjs/common';
 // import { ConfigService } from '@nestjs/config';
 // // import { DatabaseService } from './database.service';
